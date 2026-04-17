@@ -2,9 +2,65 @@
 <html>
 <head>
   <title>Pulpa App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  body {
+    font-family: Arial;
+    background: #eef2f7;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 400px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  ul {
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    background: #f1f1f1;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  </style>
+
 </head>
-<body style="font-family: Arial; padding: 20px;">
+</div>
+<body>
+
+    <div class="container"></div>
 
   <h2>Registro de Ventas 🥭</h2>
 
@@ -83,7 +139,7 @@
       ventas.push(venta);
 
       localStorage.setItem("ventas", JSON.stringify(ventas));
-      
+
     mostrarVentas();
 
       let suma = 0;
