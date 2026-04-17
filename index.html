@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pulpa App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial; padding: 20px;">
+
+  <h2>Registro de Ventas 🥭</h2>
+
+  <label>Producto:</label><br>
+  <select id="producto">
+    <option>Mora</option>
+    <option>Mango</option>
+    <option>Durazno</option>
+    <option>Guayaba</option>
+    <option>Lulo</option>
+    <option>Fresa</option>
+    <option>Tomate de Arbol</option>
+  </select>
+
+  <br><br>
+
+  <label>Cantidad (lb):</label><br>
+  <input type="number" id="cantidad">
+
+  <br><br>
+
+  <button onclick="guardar()" style="padding:10px;">Guardar</button>
+
+  <h3 id="total"></h3>
+
+  <h3>Historial de ventas</h3>
+  <ul id="lista"></ul>
+
+  <h3 id="totalGeneral"></h3>
+
+  <script>
+    let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+
+    mostrarVentas();
+
+    function mostrarVentas() {
+  let lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  let suma = 0;
+
+  ventas.forEach(v => {
+    let item = document.createElement("li");
+    item.textContent =
+      v.producto + " - " + v.cantidad + " lb - $" + v.total;
+    lista.appendChild(item);
+
+    suma += v.total;
+  });
+
+  document.getElementById("totalGeneral").innerText =
+    "Total general: $" + suma;
+}
+
+    function guardar() {
+      let producto = document.getElementById("producto").value;
+      let cantidad = document.getElementById("cantidad").value;
+
+      if (cantidad === "" || cantidad <= 0) {
+        alert("Ingrese una cantidad válida");
+        return;
+      }
+
+      let precio = 5000;
+      let total = cantidad * precio;
+
+      document.getElementById("total").innerText =
+        "Total: $" + total;
+
+      let venta = {
+        producto: producto,
+        cantidad: cantidad,
+        total: total
+      };
+
+      ventas.push(venta);
+
+      localStorage.setItem("ventas", JSON.stringify(ventas));
+      
+    mostrarVentas();
+
+      let suma = 0;
+
+ventas.forEach(v => {
+  suma += v.total;
+});
+
+      document.getElementById("cantidad").value = "";
+    }
+  </script>
+
+<body style="font-family: Arial; padding: 20px; background: #f5f5f5;">
+</html>
