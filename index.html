@@ -36,7 +36,7 @@
 <body>
 
     <div class="container">
-        <h2>Venta de Pulpa</h2>
+        <h2>Registro de Fruta</h2>
         <div class="stock-info" id="avisoStock">Conectando...</div>
 
         <label>Producto:</label>
@@ -55,7 +55,7 @@
         <input type="number" id="cantidad" placeholder="Ej: 2" step="1" oninput="calcularPrecio()">
 
         <div class="total-box">
-            Total a cobrar:<br>
+            Total a Valor:<br>
             <span id="displayTotal">$ 0</span>
         </div>
 
@@ -65,7 +65,7 @@
         <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Ventas</button>
 
         <div id="seccionTablas">
-            <h3>Nevera en Tiempo Real</h3>
+            <h3>Disponible En Nevera</h3>
             <table id="tablaInventario"></table>
 
             <h3>Historial de Ventas</h3>
