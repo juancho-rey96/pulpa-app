@@ -28,7 +28,7 @@
 <body>
 
     <div class="container">
-        <h2>Registro de Pulpa 🥭</h2>
+        <h2>Registro de Fruta</h2>
         <div class="stock-info" id="avisoStock">Conectando a la nube...</div>
 
         <label>Fruta disponible:</label>
@@ -84,7 +84,7 @@
                 inventario = data;
             } else {
                 // Si la base de datos está vacía por primera vez
-                inventario = { "Mora": 10, "Pera": 10, "Mango": 15, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 };
+                inventario = { "Mora": 0, "Pera": 0, "Mango": 0, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 };
                 db.ref('inventario').set(inventario);
             }
             actualizarVistaStock();
