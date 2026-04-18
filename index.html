@@ -1,156 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8">
   <title>Pulpa App</title>
-
   <style>
-  body {
-    font-family: Arial;
-    background: #eef2f7;
-    margin: 0;
-  }
-
-  .container {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-
-  h2 {
-    text-align: center;
-  }
-
-  button {
-    width: 100%;
-    padding: 12px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-
-  input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-
-  ul {
-    padding: 0;
-  }
-
-  li {
-    list-style: none;
-    background: #f1f1f1;
-    margin-bottom: 8px;
-    padding: 10px;
-    border-radius: 5px;
-  }
+    body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; padding: 20px; }
+    .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2, h3 { text-align: center; color: #333; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    
+    .btn-guardar { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    .btn-historial { width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+    .btn-borrar { width: 100%; padding: 8px; background: #dc3545; color: white; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 12px; }
+    
+    #totalReciente { text-align: center; color: #28a745; font-weight: bold; margin-top: 10px; min-height: 20px; }
+    
+    #seccionHistorial { display: none; margin-top: 20px; border-top: 2px solid #eee; padding-top: 10px; }
+    ul { padding: 0; }
+    li { list-style: none; background: #f8f9fa; margin-bottom: 5px; padding: 10px; border-radius: 5px; border-left: 4px solid #28a745; font-size: 14px; }
   </style>
-
 </head>
-</div>
 <body>
 
-    <div class="container">
+  <div class="container">
+    <h2>Registro de Ventas 🥭</h2>
 
-  <h2>Registro de Ventas 🥭</h2>
+    <label>Producto:</label>
+    <select id="producto">
+      <option>Mora</option>
+      <option>Mango</option>
+      <option>Durazno</option>
+      <option>Guayaba</option>
+      <option>Lulo</option>
+      <option>Fresa</option>
+      <option>Tomate de Árbol</option>
+    </select>
 
-  <label>Producto:</label><br>
-  <select id="producto">
-    <option>Mora</option>
-    <option>Mango</option>
-    <option>Durazno</option>
-    <option>Guayaba</option>
-    <option>Lulo</option>
-    <option>Fresa</option>
-    <option>Tomate de Arbol</option>
-  </select>
+    <label>Cantidad (lb):</label>
+    <input type="number" id="cantidad" placeholder="Ingresa libras">
 
-  <br><br>
+    <button class="btn-guardar" onclick="guardar()">Guardar Venta</button>
+    
+    <div id="totalReciente"></div>
 
-  <label>Cantidad (lb):</label><br>
-  <input type="number" id="cantidad">
+    <button class="btn-historial" onclick="toggleHistorial()">📋 Ver/Ocultar Historial</button>
 
-  <br><br>
-
-  <button onclick="guardar()" style="padding:10px;">Guardar</button>
-
-  <h3 id="total"></h3>
-
-  <h3>Historial de ventas</h3>
-  <ul id="lista"></ul>
-
-  <h3 id="totalGeneral"></h3>
+    <div id="seccionHistorial">
+      <h3>Historial Guardado</h3>
+      <ul id="lista"></ul>
+      <h3 id="totalGeneral">Total general: $0</h3>
+      <button class="btn-borrar" onclick="borrarHistorial()">🗑️ Borrar Todo el Historial</button>
+    </div>
+  </div>
 
   <script>
-    let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+    // Intentamos cargar las ventas
+  let ventas = [];
+  try {
+    ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+    console.log("Ventas cargadas correctamente:", ventas);
+  } catch (e) {
+    console.error("Error al cargar localStorage:", e);
+  }
 
-    mostrarVentas();
+  function mostrarVentas() {
+    let lista = document.getElementById("lista");
+    if (!lista) return; // Si no existe la lista, no hacemos nada
 
-    function mostrarVentas() {
-  let lista = document.getElementById("lista");
-  lista.innerHTML = "";
+    lista.innerHTML = "";
+    let suma = 0;
 
-  let suma = 0;
+    ventas.forEach((v) => {
+      let item = document.createElement("li");
+      item.innerHTML = `<b>${v.producto}</b> - ${v.cantidad} lb - $${v.total}`;
+      lista.appendChild(item);
+      suma += v.total;
+    });
 
-  ventas.forEach(v => {
-    let item = document.createElement("li");
-    item.textContent =
-      v.producto + " - " + v.cantidad + " lb - $" + v.total;
-    lista.appendChild(item);
+    let totalGral = document.getElementById("totalGeneral");
+    if (totalGral) totalGral.innerText = "Total general: $" + suma;
+  }
 
-    suma += v.total;
-  });
+  function guardar() {
+    console.log("Botón presionado");
 
-  document.getElementById("totalGeneral").innerText =
-    "Total general: $" + suma;
-}
+    // 1. Validar elementos
+    let elProducto = document.getElementById("producto");
+    let elCantidad = document.getElementById("cantidad");
 
-    function guardar() {
-      let producto = document.getElementById("producto").value;
-      let cantidad = document.getElementById("cantidad").value;
-
-      if (cantidad === "" || cantidad <= 0) {
-        alert("Ingrese una cantidad válida");
-        return;
-      }
-
-      let precio = 5000;
-      let total = cantidad * precio;
-
-      document.getElementById("total").innerText =
-        "Total: $" + total;
-
-      let venta = {
-        producto: producto,
-        cantidad: cantidad,
-        total: total
-      };
-
-      ventas.push(venta);
-
-      localStorage.setItem("ventas", JSON.stringify(ventas));
-
-    mostrarVentas();
-
-      let suma = 0;
-
-ventas.forEach(v => {
-  suma += v.total;
-});
-
-      document.getElementById("cantidad").value = "";
+    if (!elProducto || !elCantidad) {
+      alert("ERROR: No se encuentran los campos 'producto' o 'cantidad' en el HTML.");
+      return;
     }
-  </script>
 
-<body style="font-family: Arial; padding: 20px; background: #f5f5f5;">
+    let producto = elProducto.value;
+    let cantidad = elCantidad.value;
+
+    // 2. Validar valores
+    if (cantidad === "" || cantidad <= 0) {
+      alert("Por favor, ingresa una cantidad válida.");
+      return;
+    }
+
+    // 3. Calcular
+    let totalVenta = parseFloat(cantidad) * 5000;
+
+    // 4. Guardar
+    let nuevaVenta = {
+      producto: producto,
+      cantidad: cantidad,
+      total: totalVenta
+    };
+
+    ventas.push(nuevaVenta);
+    localStorage.setItem("ventas", JSON.stringify(ventas));
+
+    // 5. Feedback visual
+    let elTotalReciente = document.getElementById("totalReciente");
+    if (elTotalReciente) {
+      elTotalReciente.innerText = "Última venta guardada: $" + totalVenta;
+    }
+
+    // 6. Limpiar y actualizar
+    elCantidad.value = "";
+    mostrarVentas();
+    
+    alert("¡Venta guardada con éxito!"); 
+  }
+
+  function toggleHistorial() {
+    let seccion = document.getElementById("seccionHistorial");
+    if (seccion) {
+      seccion.style.display = (seccion.style.display === "none" || seccion.style.display === "") ? "block" : "none";
+    }
+  }
+  // Ejecutar al iniciar
+  mostrarVentas();
+
+  function borrarHistorial() {
+  // Pedimos confirmación para evitar borrados accidentales
+  if (confirm("¿Estás seguro de que quieres borrar TODAS las ventas registradas?")) {
+    
+    // 1. Vaciamos el arreglo en el código
+    ventas = [];
+    
+    // 2. Limpiamos la memoria del navegador (LocalStorage)
+    localStorage.removeItem("ventas");
+    
+    // 3. Actualizamos la lista y el total general en pantalla
+    mostrarVentas();
+    
+    // 4. Limpiamos el mensaje de "Última venta"
+    let elTotalReciente = document.getElementById("totalReciente");
+    if (elTotalReciente) {
+      elTotalReciente.innerText = "";
+    }
+
+    alert("Historial eliminado correctamente.");
+  }
+}
+</script>
+
+</body>
 </html>
