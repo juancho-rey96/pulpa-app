@@ -130,10 +130,10 @@
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
             let totalVenta = cant * PRECIO_UNIDAD;
-            let fecha = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let fecha = new Date().toLocaleString();
 
             if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) {
-                alert("Cantidad insuficiente o no válida."); return;
+                alert("Cantidad no válida."); return;
             }
 
             let nuevoStock = Math.round((inventario[p] - cant) * 100) / 100;
@@ -142,6 +142,7 @@
 
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
+            alert("Venta registrada con éxito.");
         }
 
         function pagarNequi() {
@@ -152,6 +153,11 @@
                 alert("Número " + numeroNequi + " copiado.\nTotal: " + total + "\n\nRedirigiendo a Nequi...");
                 window.location.href = "nequi://"; 
             });
+        }
+
+        function toggleSeccion() {
+            let s = document.getElementById("seccionTablas");
+            s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
         }
     </script>
 </body>
