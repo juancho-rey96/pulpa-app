@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pulpa App Pro - Inventario Total 🥭</title>
+    <title>Pulpa App Pro - Caja y Nequi 🥭</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
@@ -16,16 +16,18 @@
         label { font-weight: 600; display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
         
+        /* Sección de Total */
+        .total-box { margin-top: 15px; padding: 15px; background: #e8f0fe; border-radius: 10px; text-align: center; border: 1px solid #1a73e8; }
+        .total-box span { font-size: 24px; font-weight: bold; color: #1a73e8; }
+
         .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-transferencia { width: 100%; padding: 12px; background: #6f42c1; color: white; border: none; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-toggle { width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
 
-        /* Estilos Tablas e Historial */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         table th, table td { border: 1px solid #eee; padding: 10px; text-align: left; font-size: 14px; }
-        table th { background: #f8f9fa; }
         
-        .log-item { background: #f8f9fa; padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #28a745; font-size: 13px; }
+        .log-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #28a745; font-size: 13px; }
         .fecha { font-size: 10px; color: #888; display: block; }
         
         #seccionTablas { display: none; margin-top: 20px; border-top: 2px solid #eee; }
@@ -37,7 +39,7 @@
         <h2>Registro de Fruta</h2>
         <div class="stock-info" id="avisoStock">Conectando...</div>
 
-        <label>Fruta:</label>
+        <label>Producto:</label>
         <select id="producto" onchange="actualizarVistaStock()">
             <option value="Mora">Mora 🍇</option>
             <option value="Pera">Pera 🍐</option>
@@ -50,25 +52,29 @@
         </select>
 
         <label>Cantidad (lb):</label>
-        <input type="number" id="cantidad" placeholder="Ej: 2.5" step="0.1">
+        <input type="number" id="cantidad" placeholder="Ej: 2" step="1" oninput="calcularPrecio()">
 
-        <button class="btn-guardar" onclick="guardar()">Registrar Venta</button>
-        <button class="btn-transferencia" onclick="irATransferencia()">💳 Pagar con Transferencia</button>
+        <div class="total-box">
+            Total a cobrar:<br>
+            <span id="displayTotal">$ 0</span>
+        </div>
 
-        <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Movimientos</button>
+        <button class="btn-guardar" onclick="guardar()">Registrar y Guardar</button>
+        <button class="btn-nequi" onclick="pagarNequi()">Pagar con Nequi</button>
+
+        <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Ventas</button>
 
         <div id="seccionTablas">
-            <h3>Nevera en Tiempo Real</h3>
+            <h3>Disponible En Nevera</h3>
             <table id="tablaInventario"></table>
 
-            <h3>Movimientos Recientes</h3>
-            <div id="listaHistorial">No hay ventas registradas.</div>
-            
-            <button onclick="reiniciarTodo()" style="width:100%; background:none; color:#dc3545; border:none; margin-top:30px; cursor:pointer; font-size:11px;">⚠ Reiniciar Todo el Inventario</button>
+            <h3>Historial de Ventas</h3>
+            <div id="listaHistorial">No hay registros.</div>
         </div>
     </div>
 
     <script>
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAYJ15P0bWb35dY8sbNuC0_4xcYFsuaz7A",
             authDomain: "pulpaapp-3ec88.firebaseapp.com",
@@ -82,30 +88,34 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         let inventario = {};
+        const PRECIO_UNIDAD = 5000;
 
-        // Sincronizar Inventario y Tabla
         db.ref('inventario').on('value', (snapshot) => {
             inventario = snapshot.val() || {};
             actualizarVistaStock();
             dibujarTabla();
         });
 
-        // Sincronizar Historial
         db.ref('historial_ventas').limitToLast(5).on('value', (snapshot) => {
             const data = snapshot.val();
             const container = document.getElementById("listaHistorial");
             container.innerHTML = "";
             if (data) {
                 Object.values(data).reverse().forEach(log => {
-                    container.innerHTML += `<div class="log-item"><span class="fecha">${log.fecha}</span><b>-${log.cantidad} lb</b> de ${log.fruta}</div>`;
+                    container.innerHTML += `<div class="log-item"><span class="fecha">${log.fecha}</span><b>${log.fruta}</b>: ${log.cantidad} lb -> <b>$${log.total.toLocaleString()}</b></div>`;
                 });
             }
         });
 
+        function calcularPrecio() {
+            let cant = parseFloat(document.getElementById("cantidad").value) || 0;
+            document.getElementById("displayTotal").innerText = "$ " + (cant * PRECIO_UNIDAD).toLocaleString();
+        }
+
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
-            document.getElementById("avisoStock").innerText = "Hay " + stock + " lb de " + p;
+            document.getElementById("avisoStock").innerText = "Stock: " + stock + " lb de " + p;
         }
 
         function dibujarTabla() {
@@ -119,47 +129,42 @@
         function guardar() {
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
+            let totalVenta = cant * PRECIO_UNIDAD;
             let fecha = new Date().toLocaleString();
 
             if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) {
-                alert("Cantidad no válida o insuficiente."); return;
+                alert("Cantidad no válida."); return;
             }
 
             let nuevoStock = Math.round((inventario[p] - cant) * 100) / 100;
-            
-            // 1. Actualiza Stock
             db.ref('inventario/' + p).set(nuevoStock);
-            // 2. Guarda Historial
-            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, fecha: fecha });
+            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: totalVenta, fecha: fecha });
 
             document.getElementById("cantidad").value = "";
+            document.getElementById("displayTotal").innerText = "$ 0";
+            alert("Venta registrada con éxito.");
+        }
+
+        function pagarNequi() {
+            let numeroNequi = "3114413297"; // Pon tu número real aquí
+            let total = document.getElementById("displayTotal").innerText;
+            
+            // Copiar número al portapapeles
+            navigator.clipboard.writeText(numeroNequi).then(() => {
+                alert("Número de Nequi (" + numeroNequi + ") copiado al portapapeles.\n\nEl total es: " + total + "\n\nAhora abre tu App Nequi y pega el número.");
+                // Intento de abrir la app (algunos navegadores lo permiten)
+                window.location.href = "nequi://"; 
+            });
         }
 
         function toggleSeccion() {
             let s = document.getElementById("seccionTablas");
             s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
         }
-
-        function irATransferencia() {
-    // 1. Obtener los datos de la venta actual
-    let fruta = document.getElementById("producto").value;
-    let cant = document.getElementById("cantidad").value;
-    
-    // 2. Tu número de teléfono (CÁMBIALO AQUÍ)
-    let miTelefono = "573114413297"; // Usa el formato: 57 + número
-    
-    // 3. Crear el mensaje
-    let mensaje = `Hola! 👋 Acabo de registrar una venta en la App:%0A🍎 Fruta: ${""}%0A⚖️ Cantidad: ${""} lb%0A%0A¿Me confirmas los datos para la transferencia?`;
-
-    // 4. Abrir WhatsApp
-    window.open(`https://wa.me/${miTelefono}?text=${mensaje}`, '_blank');
-}
-
-        function reiniciarTodo() {
+function reiniciarTodo() {
             if(confirm("¿Restablecer inventario?")) {
-                db.ref('inventario').set({ "Mora": 0, "Pera": 0, "Mango": 0, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
+                db.ref('inventario').set({ "Mora": 10, "Pera": 10, "Mango": 15, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
             }
-        }
     </script>
 </body>
 </html>
