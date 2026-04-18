@@ -36,7 +36,7 @@
 <body>
 
     <div class="container">
-        <h2>Registro de Fruta</h2>
+        <h2>Venta de Pulpa</h2>
         <div class="stock-info" id="avisoStock">Conectando...</div>
 
         <label>Producto:</label>
@@ -65,7 +65,7 @@
         <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Ventas</button>
 
         <div id="seccionTablas">
-            <h3>Disponible En Nevera</h3>
+            <h3>Nevera en Tiempo Real</h3>
             <table id="tablaInventario"></table>
 
             <h3>Historial de Ventas</h3>
@@ -130,10 +130,10 @@
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
             let totalVenta = cant * PRECIO_UNIDAD;
-            let fecha = new Date().toLocaleString();
+            let fecha = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) {
-                alert("Cantidad no válida."); return;
+                alert("Cantidad insuficiente o no válida."); return;
             }
 
             let nuevoStock = Math.round((inventario[p] - cant) * 100) / 100;
@@ -142,29 +142,17 @@
 
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
-            alert("Venta registrada con éxito.");
         }
 
         function pagarNequi() {
-            let numeroNequi = "3114413297"; // Pon tu número real aquí
+            let numeroNequi = "3114413297"; // CAMBIA ESTE NÚMERO POR EL TUYO
             let total = document.getElementById("displayTotal").innerText;
             
-            // Copiar número al portapapeles
             navigator.clipboard.writeText(numeroNequi).then(() => {
-                alert("Número de Nequi (" + numeroNequi + ") copiado al portapapeles.\n\nEl total es: " + total + "\n\nAhora abre tu App Nequi y pega el número.");
-                // Intento de abrir la app (algunos navegadores lo permiten)
+                alert("Número " + numeroNequi + " copiado.\nTotal: " + total + "\n\nRedirigiendo a Nequi...");
                 window.location.href = "nequi://"; 
             });
         }
-
-        function toggleSeccion() {
-            let s = document.getElementById("seccionTablas");
-            s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
-        }
-function reiniciarTodo() {
-            if(confirm("¿Restablecer inventario?")) {
-                db.ref('inventario').set({ "Mora": 10, "Pera": 10, "Mango": 15, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
-            }
     </script>
 </body>
 </html>
