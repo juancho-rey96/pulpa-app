@@ -131,7 +131,7 @@
 
         function reiniciarTodo() {
             if(confirm("¿Quieres restablecer el inventario inicial en la nube?")) {
-                db.ref('inventario').set({ "Mora": 10, "Pera": 10, "Mango": 15, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
+                db.ref('inventario').set({ "Mora": 0, "Pera": 0, "Mango": 0, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
             }
         }
     </script>
