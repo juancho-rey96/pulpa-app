@@ -3,35 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pulpa App - Control en Línea ☁️</title>
+    <title>Pulpa App Pro 🥭</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
         .container { max-width: 420px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; }
+        h2 { text-align: center; color: #1a73e8; }
         .stock-info { background: #fff3cd; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
-        label { font-weight: 600; display: block; margin-top: 15px; color: #444; }
+        label { font-weight: 600; display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
-        .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        .btn-guardar:active { transform: scale(0.98); background: #218838; }
-        .btn-historial { width: 100%; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; font-size: 14px; }
-        #seccionHistorial { display: none; margin-top: 25px; border-top: 2px solid #f0f2f5; padding-top: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
-        table th, table td { border: 1px solid #eee; padding: 12px; text-align: left; }
-        table th { background: #f8f9fa; color: #555; }
-        .status-sync { font-size: 12px; text-align: center; color: #999; margin-top: 10px; }
+        
+        .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        
+        /* Botón de Transferencia */
+        .btn-transferencia { width: 100%; padding: 12px; background: #6f42c1; color: white; border: none; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        
+        /* Estilos Historial */
+        .historial-box { margin-top: 25px; border-top: 2px solid #eee; padding-top: 15px; }
+        .log-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #28a745; font-size: 14px; }
+        .fecha { font-size: 11px; color: #888; display: block; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>Registro de Fruta</h2>
-        <div class="stock-info" id="avisoStock">Conectando a la nube...</div>
+        <div class="stock-info" id="avisoStock">Conectando...</div>
 
-        <label>Fruta disponible:</label>
+        <label>Fruta:</label>
         <select id="producto" onchange="actualizarVistaStock()">
             <option value="Mora">Mora 🍇</option>
             <option value="Pera">Pera 🍐</option>
@@ -47,19 +49,16 @@
         <input type="number" id="cantidad" placeholder="Ej: 2.5" step="0.1">
 
         <button class="btn-guardar" onclick="guardar()">Registrar Venta</button>
-        <div class="status-sync" id="statusSync">Sincronizado con Firebase ☁️</div>
+        
+        <button class="btn-transferencia" onclick="irATransferencia()">💳 Pagar con Transferencia</button>
 
-        <button class="btn-historial" onclick="toggleHistorial()">📋 Inventario Completo</button>
-
-        <div id="seccionHistorial">
-            <h3>Nevera en Tiempo Real</h3>
-            <table id="tablaInventario"></table>
-            <button onclick="reiniciarTodo()" style="width:100%; background:none; color:#dc3545; border:none; margin-top:20px; cursor:pointer; font-size:12px;">⚠ Reiniciar Inventario</button>
+        <div class="historial-box">
+            <h3>Movimientos Recientes</h3>
+            <div id="listaHistorial">No hay registros hoy.</div>
         </div>
     </div>
 
     <script>
-        // TUS DATOS DE FIREBASE INTEGRADOS
         const firebaseConfig = {
             apiKey: "AIzaSyAYJ15P0bWb35dY8sbNuC0_4xcYFsuaz7A",
             authDomain: "pulpaapp-3ec88.firebaseapp.com",
@@ -67,72 +66,71 @@
             projectId: "pulpaapp-3ec88",
             storageBucket: "pulpaapp-3ec88.firebasestorage.app",
             messagingSenderId: "1036704181260",
-            appId: "1:1036704181260:web:1213390bb88350cad09229",
-            measurementId: "G-54P24PSSST"
+            appId: "1:1036704181260:web:1213390bb88350cad09229"
         };
 
-        // Inicialización
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         let inventario = {};
 
-        // ESCUCHAR CAMBIOS EN TIEMPO REAL (La magia ocurre aquí)
+        // 1. Escuchar Inventario
         db.ref('inventario').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                inventario = data;
-            } else {
-                // Si la base de datos está vacía por primera vez
-                inventario = { "Mora": 0, "Pera": 0, "Mango": 0, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 };
-                db.ref('inventario').set(inventario);
-            }
+            inventario = snapshot.val() || {};
             actualizarVistaStock();
+        });
+
+        // 2. Escuchar Historial (Últimos 5)
+        db.ref('historial_ventas').limitToLast(5).on('value', (snapshot) => {
+            const data = snapshot.val();
+            const container = document.getElementById("listaHistorial");
+            container.innerHTML = "";
+            if (data) {
+                Object.values(data).reverse().forEach(log => {
+                    container.innerHTML += `
+                        <div class="log-item">
+                            <span class="fecha">${log.fecha}</span>
+                            Vendido: <b>${log.cantidad} lb</b> de ${log.fruta}
+                        </div>`;
+                });
+            }
         });
 
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
             document.getElementById("avisoStock").innerText = "Hay " + stock + " lb de " + p;
-            
-            let tabla = document.getElementById("tablaInventario");
-            tabla.innerHTML = "<tr><th>Fruta</th><th>Stock</th></tr>";
-            for (let fruta in inventario) {
-                tabla.innerHTML += `<tr><td>${fruta}</td><td>${inventario[fruta]} lb</td></tr>`;
-            }
         }
 
         function guardar() {
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
+            let fecha = new Date().toLocaleString();
 
-            if (isNaN(cant) || cant <= 0) {
-                alert("Por favor ingresa una cantidad válida.");
-                return;
+            if (isNaN(cant) || cant <= 0 || cant > inventario[p]) {
+                alert("Cantidad no válida."); return;
             }
 
-            if (cant > inventario[p]) {
-                alert("¡Atención! Solo quedan " + inventario[p] + " lb en la nevera.");
-                return;
-            }
-
-            // ACTUALIZAR EN LA NUBE (Se refleja en todos los celulares)
+            // Restar del inventario
             let nuevoStock = Math.round((inventario[p] - cant) * 100) / 100;
             db.ref('inventario/' + p).set(nuevoStock);
-            
+
+            // GUARDAR EN EL HISTORIAL
+            db.ref('historial_ventas').push({
+                fruta: p,
+                cantidad: cant,
+                fecha: fecha
+            });
+
             document.getElementById("cantidad").value = "";
-            document.getElementById("statusSync").innerText = "Última venta: " + cant + " lb de " + p + " ✅";
+            alert("Venta guardada y registrada en el historial.");
         }
 
-        function toggleHistorial() {
-            let s = document.getElementById("seccionHistorial");
-            s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
-        }
+        function irATransferencia() {
+            // OPCIÓN A: Abrir link de pago (si tienes uno)
+            // window.location.href = "https://tu-link-de-pago.com";
 
-        function reiniciarTodo() {
-            if(confirm("¿Quieres restablecer el inventario inicial en la nube?")) {
-                db.ref('inventario').set({ "Mora": 10, "Pera": 10, "Mango": 15, "Durazno": 8, "Guayaba": 20, "Lulo": 5, "Fresa": 12, "Tomate de Árbol": 10 });
-            }
+            // OPCIÓN B: Mostrar mensaje con tus datos (Lo más común)
+            alert("Datos para Transferencia:\n\nNequi/Daviplata: 300 123 4567\nTitular: Nombre del Negocio");
         }
     </script>
 </body>
