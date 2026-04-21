@@ -126,17 +126,6 @@
             for (let fruta in inventario) {
                 tabla.innerHTML += `<tr><td>${fruta}</td><td>${inventario[fruta]} lb</td></tr>`;
 
-                //NUEVO PRUEBA
-                <div style="background: #eefaf0; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #28a745;">
-    <h4 style="margin-top:0; color: #28a745;">+ Cargar Inventario Nuevo</h4>
-    <label>¿Cuántas libras llegaron?</label>
-    <input type="number" id="cantidadNueva" placeholder="Ej: 10" step="0.1">
-    <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold; cursor:pointer;">
-        Sumar a la Nevera
-    </button>
-</div>
-            }
-        }
 
         function guardar() {
             let p = document.getElementById("producto").value;
@@ -171,25 +160,41 @@
             let s = document.getElementById("seccionTablas");
             s.style.display = (s.style.display === "none" || s.style.display === "") ? "block" : "none";
 
-            //NUEVO 
+            //NUEVO
+            <div style="background: #eefaf0; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #28a745;">
+    <h4 style="margin:0 0 10px 0; color: #28a745; text-align: center;">📥 Cargar Inventario</h4>
+    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Selecciona la fruta arriba y escribe cuánto vas a sumar:</p>
+    
+    <input type="number" id="cantidadNueva" placeholder="Libras que llegaron" step="0.1" style="border: 1px solid #28a745;">
+    
+    <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:12px; border-radius:8px; margin-top:10px; font-weight:bold; cursor:pointer;">
+        Sumar a la Nevera
+    </button>
+</div>
+
+            //NUEVO
             function sumarStock() {
-    let p = document.getElementById("producto").value;
+    let p = document.getElementById("producto").value; // Toma la fruta seleccionada en el menú principal
     let cantNueva = parseFloat(document.getElementById("cantidadNueva").value);
 
     if (isNaN(cantNueva) || cantNueva <= 0) {
-        alert("Ingresa una cantidad válida para sumar.");
+        alert("Por favor, ingresa una cantidad válida para sumar.");
         return;
     }
 
-    // Sumamos lo que hay + lo nuevo
+    // Calculamos el nuevo total (Lo que hay en Firebase + lo que llegó)
     let stockActual = inventario[p] || 0;
     let nuevoTotal = Math.round((stockActual + cantNueva) * 100) / 100;
 
-    // Guardamos en Firebase
-    db.ref('inventario/' + p).set(nuevoTotal);
-
-    document.getElementById("cantidadNueva").value = "";
-    alert("¡Listo! Ahora tienes " + nuevoTotal + " lb de " + p);
+    // ACTUALIZAMOS EN FIREBASE
+    db.ref('inventario/' + p).set(nuevoTotal)
+        .then(() => {
+            alert("✅ ¡Éxito! Ahora tienes " + nuevoTotal + " lb de " + p);
+            document.getElementById("cantidadNueva").value = ""; // Limpia el campo
+        })
+        .catch((error) => {
+            alert("Error al actualizar: " + error.message);
+        });
 }
         }
     </script>
