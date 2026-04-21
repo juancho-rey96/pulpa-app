@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pulpa App Pro 🥭</title>
+    <title>Pulpa App Pro - Gestión Total 🥭</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
@@ -11,8 +11,15 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
         .container { max-width: 420px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2, h3, h4 { text-align: center; color: #1a73e8; margin-bottom: 10px; }
+        
+        h2, h3, h4 { text-align: center; color: #1a73e8; margin-top: 5px; }
+        
+        /* Foto de la Fruta */
+        .foto-contenedor { text-align: center; margin-bottom: 15px; }
+        #fotoFruta { width: 100px; height: 100px; border-radius: 20px; object-fit: cover; border: 3px solid #e8f0fe; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
         .stock-info { background: #fff3cd; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
+        
         label { font-weight: 600; display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
         
@@ -21,7 +28,7 @@
 
         .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-toggle { width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
+        .btn-toggle { width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; font-size: 14px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         table th, table td { border: 1px solid #eee; padding: 10px; text-align: left; font-size: 14px; }
@@ -32,14 +39,21 @@
         .fecha { font-size: 10px; color: #888; display: block; }
         
         #seccionTablas { display: none; margin-top: 20px; border-top: 2px solid #eee; }
+        
         .box-carga { background: #eefaf0; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #28a745; }
+        .box-cierre { margin-top: 20px; padding: 15px; background: #fff; border: 2px dashed #1a73e8; border-radius: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>Registro de Venta</h2>
-        <div class="stock-info" id="avisoStock">Conectando...</div>
+        
+        <div class="foto-contenedor">
+            <img id="fotoFruta" src="https://cdn-icons-png.flaticon.com/512/1625/1625099.png" alt="Fruta">
+        </div>
+
+        <div class="stock-info" id="avisoStock">Conectando a la nevera...</div>
 
         <label>Producto:</label>
         <select id="producto" onchange="actualizarVistaStock()">
@@ -54,7 +68,7 @@
         </select>
 
         <label>Cantidad (lb):</label>
-        <input type="number" id="cantidad" placeholder="Ej: 2" step="0.1" oninput="calcularPrecio()">
+        <input type="number" id="cantidad" placeholder="¿Cuánto vendiste?" step="0.1" oninput="calcularPrecio()">
 
         <div class="total-box">
             Valor Total:<br>
@@ -64,7 +78,7 @@
         <button class="btn-guardar" onclick="guardarVenta()">Registrar y Descontar</button>
         <button class="btn-nequi" onclick="pagarNequi()">Cobrar con Nequi</button>
 
-        <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Ventas</button>
+        <button class="btn-toggle" onclick="toggleSeccion()">📋 Ver Inventario y Caja</button>
 
         <div id="seccionTablas">
             <h3>Disponible En Nevera</h3>
@@ -78,12 +92,24 @@
                 </button>
             </div>
 
-            <h3>Historial de Ventas</h3>
-            <div id="listaHistorial">No hay registros.</div>
+            <h3>Ventas Recientes</h3>
+            <div id="listaHistorial">No hay registros hoy.</div>
+
+            <div class="box-cierre">
+                <h4>💰 Cuadre de Caja</h4>
+                <p id="resultadoCierre" style="font-size: 22px; font-weight: bold; color: #1a73e8; margin: 10px 0;">$ 0</p>
+                <button onclick="hacerCierreCaja()" style="background: #1a73e8; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;">
+                    Calcular Total del Día
+                </button>
+                <button onclick="borrarHistorial()" style="background: #dc3545; color: white; border: none; padding: 5px; border-radius: 5px; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; opacity: 0.8;">
+                    Reiniciar Día (Borrar Historial)
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAYJ15P0bWb35dY8sbNuC0_4xcYFsuaz7A",
             authDomain: "pulpaapp-3ec88.firebaseapp.com",
@@ -99,12 +125,26 @@
         let inventario = {};
         const PRECIO_UNIDAD = 5000;
 
+        // Diccionario de Fotos
+        const fotos = {
+            "Mora": "https://img.freepik.com/foto-gratis/moras-frescas-sobre-fondo-blanco_144627-14734.jpg",
+            "Pera": "https://img.freepik.com/foto-gratis/pera-fresca-aislado_144627-14371.jpg",
+            "Mango": "https://img.freepik.com/foto-gratis/mango-fresco-aislado_144627-14373.jpg",
+            "Durazno": "https://img.freepik.com/foto-gratis/durazno-fresco-aislado_144627-14375.jpg",
+            "Guayaba": "https://img.freepik.com/foto-gratis/guayaba-fresca-aislada_144627-14377.jpg",
+            "Lulo": "https://img.freepik.com/premium-photo/close-up-lulo-fruit-isolated-white-background_253984-7541.jpg",
+            "Fresa": "https://img.freepik.com/foto-gratis/fresa-fresca-aislada_144627-14381.jpg",
+            "Tomate de Árbol": "https://jumbocolombiaio.vtexassets.com/arquivos/ids/205697/7709848520261.jpg"
+        };
+
+        // Escuchar cambios en Inventario
         db.ref('inventario').on('value', (snapshot) => {
             inventario = snapshot.val() || {};
             actualizarVistaStock();
             dibujarTabla();
         });
 
+        // Escuchar cambios en Historial
         db.ref('historial_ventas').limitToLast(5).on('value', (snapshot) => {
             const data = snapshot.val();
             const container = document.getElementById("listaHistorial");
@@ -124,7 +164,8 @@
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
-            document.getElementById("avisoStock").innerText = "Stock actual: " + stock + " lb de " + p;
+            document.getElementById("avisoStock").innerText = "Hay " + stock + " lb de " + p;
+            document.getElementById("fotoFruta").src = fotos[p] || "https://cdn-icons-png.flaticon.com/512/1625/1625099.png";
         }
 
         function dibujarTabla() {
@@ -141,10 +182,10 @@
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
             let totalVenta = cant * PRECIO_UNIDAD;
-            let fecha = new Date().toLocaleString();
+            let fecha = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) {
-                alert("Cantidad no válida o insuficiente."); return;
+                alert("Cantidad no válida o no hay suficiente pulpa."); return;
             }
 
             let nuevoStock = Math.round((inventario[p] - cant) * 100) / 100;
@@ -153,25 +194,44 @@
 
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
-            alert("Venta registrada.");
+            alert("¡Venta guardada!");
         }
 
         function sumarStock() {
             let p = document.getElementById("producto").value;
             let cantNueva = parseFloat(document.getElementById("cantidadNueva").value);
-            if (isNaN(cantNueva) || cantNueva <= 0) { alert("Ingresa una cantidad válida."); return; }
+            if (isNaN(cantNueva) || cantNueva <= 0) { alert("Ingresa cuántas libras llegaron."); return; }
 
             let nuevoTotal = Math.round(((inventario[p] || 0) + cantNueva) * 100) / 100;
             db.ref('inventario/' + p).set(nuevoTotal);
             document.getElementById("cantidadNueva").value = "";
-            alert("Inventario actualizado en Firebase.");
+            alert("Inventario cargado con éxito.");
+        }
+
+        function hacerCierreCaja() {
+            db.ref('historial_ventas').once('value', (snapshot) => {
+                const data = snapshot.val();
+                let sumaTotal = 0;
+                if (data) {
+                    Object.values(data).forEach(v => { if(v.total) sumaTotal += v.total; });
+                    document.getElementById("resultadoCierre").innerText = "$ " + sumaTotal.toLocaleString();
+                } else { alert("No hay ventas registradas aún."); }
+            });
+        }
+
+        function borrarHistorial() {
+            if (confirm("¿Quieres borrar todas las ventas de hoy? Hazlo solo después de contar tu dinero.")) {
+                db.ref('historial_ventas').remove();
+                alert("Día reiniciado.");
+                location.reload();
+            }
         }
 
         function pagarNequi() {
             let numeroNequi = "3114413297";
             let total = document.getElementById("displayTotal").innerText;
             navigator.clipboard.writeText(numeroNequi).then(() => {
-                alert("Número " + numeroNequi + " copiado.\nTotal: " + total);
+                alert("Número " + numeroNequi + " copiado.\nTotal: " + total + "\n\nEntra a Nequi y pega el número.");
                 window.location.href = "nequi://"; 
             });
         }
