@@ -13,21 +13,20 @@
             font-family: 'Segoe UI', sans-serif; 
             margin: 0; 
             padding: 15px;
-            /* FONDO DE FRUTAS QUE CUBRE TODO */
             background: url('https://img.freepik.com/vector-gratis/fondo-frutas-diseno-plano-dibujado-mano_23-2148961737.jpg') no-repeat center center fixed; 
             background-size: cover;
         }
 
         .container { 
             max-width: 420px; 
-            margin: 40px auto; 
+            margin: 20px auto; 
             background: rgba(255, 255, 255, 0.96); 
             padding: 25px; 
             border-radius: 25px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
         
-        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; }
+        h2, h3 { text-align: center; color: #1a73e8; margin-top: 0; }
         
         .stock-info { background: #fff3cd; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
         
@@ -38,35 +37,29 @@
         .total-box span { font-size: 28px; font-weight: bold; color: #1a73e8; }
 
         .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        /* SECCIÓN PAGOS */
-        .seccion-pagos { margin-top: 20px; padding: 15px; background: #f1f3f4; border-radius: 15px; }
-        .grid-pagos { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-banco { padding: 10px 5px; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; text-align: center; }
-        
-        .nequi { background: #ff0072; }
-        .bancolombia { background: #00448d; }
-        .brebe { background: #6f42c1; }
-
-        .btn-toggle { width: 100%; padding: 12px; background: #5f6368; color: white; border: none; border-radius: 10px; margin-top: 25px; cursor: pointer; font-weight: bold; }
-
-        #seccionPrivada { display: none; margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; border-radius: 8px; overflow: hidden; }
+        /* TABLA SIEMPRE VISIBLE */
+        .seccion-inventario { margin-top: 25px; border-top: 2px solid #eee; padding-top: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 10px; overflow: hidden; font-size: 14px; }
         table th, table td { border: 1px solid #eee; padding: 10px; text-align: left; }
         .alerta-stock { color: #dc3545 !important; font-weight: bold; background-color: #ffeef0; }
+
+        /* BOTÓN DE ADMINISTRACIÓN */
+        .btn-admin { width: 100%; padding: 12px; background: #5f6368; color: white; border: none; border-radius: 10px; margin-top: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
         
-        .log-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #28a745; }
+        #panelAdmin { display: none; margin-top: 15px; background: #f1f3f4; padding: 15px; border-radius: 15px; border: 1px solid #ccc; }
+        .log-item { background: white; padding: 8px; border-radius: 8px; margin-bottom: 5px; border-left: 4px solid #28a745; font-size: 12px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Venta de Pulpa 🥭</h2>
+        <h2>Registro de Venta</h2>
         
-        <div class="stock-info" id="avisoStock">Cargando stock...</div>
+        <div class="stock-info" id="avisoStock">Conectando...</div>
 
-        <label>Producto:</label>
+        <label>Fruta:</label>
         <select id="producto" onchange="actualizarVistaStock()">
             <option value="Mora">Mora 🍇</option>
             <option value="Pera">Pera 🍐</option>
@@ -78,7 +71,7 @@
             <option value="Tomate de Árbol">Tomate de Árbol 🍅</option>
         </select>
 
-        <label>Cantidad (lb):</label>
+        <label>Libras:</label>
         <input type="number" id="cantidad" placeholder="0.0" step="0.1" oninput="calcularPrecio()">
 
         <div class="total-box">
@@ -87,37 +80,26 @@
         </div>
 
         <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR VENTA</button>
+        <button class="btn-nequi" onclick="copiarNequi()">💖 COBRAR CON NEQUI</button>
 
-        <div class="seccion-pagos">
-            <h4 style="margin:0; text-align:center; font-size: 14px;">Transferir por:</h4>
-            <div class="grid-pagos">
-                <button class="btn-banco nequi" onclick="copiarYRedirigir('3114413297', 'Nequi')">NEQUI</button>
-                <button class="btn-banco bancolombia" onclick="copiarYRedirigir('000000000', 'Bancolombia')">BANCOLO</button>
-                <button class="btn-banco brebe" onclick="copiarYRedirigir('3114413297', 'Bre-B')">BRE-B</button>
-            </div>
+        <div class="seccion-inventario">
+            <h3>📦 Stock en Nevera</h3>
+            <table id="tablaInventario"></table>
         </div>
 
-        <button class="btn-toggle" onclick="abrirInventarioSeguro()">🔐 Inventario / Caja</button>
+        <button class="btn-admin" onclick="accesoAdmin()">⚙️ Panel de Administración</button>
 
-        <div id="seccionPrivada">
-            <h3>Inventario en Nevera</h3>
-            <table id="tablaInventario"></table>
+        <div id="panelAdmin">
+            <h4 style="margin:0 0 10px 0; color:#444;">📥 Cargar Mercancía</h4>
+            <input type="number" id="cantidadNueva" placeholder="Lbs que llegaron">
+            <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; margin-top:8px; font-weight:bold;">Sumar al Stock</button>
 
-            <div style="background:#eefaf0; padding:15px; border-radius:15px; margin-top:20px; border:1px solid #28a745;">
-                <h4 style="margin:0 0 10px 0; color:#28a745;">Cargar Mercancía</h4>
-                <input type="number" id="cantidadNueva" placeholder="Lbs que llegaron">
-                <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:12px; border-radius:8px; margin-top:10px; font-weight:bold;">Sumar Stock</button>
-            </div>
-
-            <h4 style="margin-top:20px;">Ventas de Hoy</h4>
+            <h4 style="margin:20px 0 10px 0; color:#444;">💰 Cierre de Caja</h4>
             <div id="listaHistorial"></div>
-
-            <div style="background:#e8f0fe; border:2px dashed #1a73e8; padding:15px; border-radius:15px; text-align:center; margin-top:20px;">
-                <h4>Cierre de Caja</h4>
-                <p id="resultadoCierre" style="font-size:24px; font-weight:bold; color:#1a73e8;">$ 0</p>
-                <button onclick="hacerCierreCaja()" style="width:100%; background:#1a73e8; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">Calcular Ventas</button>
-                <button onclick="borrarHistorial()" style="margin-top:15px; background:none; border:none; color:red; cursor:pointer; font-size:11px;">REINICIAR DÍA</button>
-            </div>
+            <p id="resultadoCierre" style="font-size:22px; font-weight:bold; color:#1a73e8; text-align:center; margin:10px 0;">$ 0</p>
+            <button onclick="hacerCierreCaja()" style="width:100%; background:#1a73e8; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold;">Calcular Total</button>
+            
+            <button onclick="borrarHistorial()" style="margin-top:20px; width:100%; background:none; border:none; color:red; cursor:pointer; font-size:11px; font-weight:bold;">REINICIAR DÍA (BORRAR TODO)</button>
         </div>
     </div>
 
@@ -139,13 +121,13 @@
 
         db.ref('inventario').on('value', (s) => { inventario = s.val() || {}; actualizarVistaStock(); dibujarTabla(); });
 
-        db.ref('historial_ventas').limitToLast(10).on('value', (s) => {
+        db.ref('historial_ventas').limitToLast(5).on('value', (s) => {
             const data = s.val();
             const cont = document.getElementById("listaHistorial");
             cont.innerHTML = "";
             if (data) {
                 Object.values(data).reverse().forEach(v => {
-                    cont.innerHTML += `<div class="log-item"><b>${v.fruta}</b>: ${v.cantidad} lb - $${v.total.toLocaleString()}</div>`;
+                    cont.innerHTML += `<div class="log-item">${v.fruta}: ${v.cantidad}lb - $${v.total.toLocaleString()}</div>`;
                 });
             }
         });
@@ -175,33 +157,31 @@
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
             if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) { alert("Verifica la cantidad"); return; }
-            
-            let total = cant * PRECIO_UNIDAD;
             db.ref('inventario/' + p).set(Math.round((inventario[p] - cant)*100)/100);
-            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: total, fecha: new Date().toLocaleString() });
-            
+            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: cant * PRECIO_UNIDAD, fecha: new Date().toLocaleString() });
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
             alert("Venta registrada ✅");
         }
 
-        function copiarYRedirigir(numero, banco) {
+        function copiarNequi() {
+            let num = "3114413297";
             let input = document.createElement("input");
-            input.value = numero;
+            input.value = num;
             document.body.appendChild(input);
             input.select();
             document.execCommand("copy");
             document.body.removeChild(input);
-            
-            alert(banco + ": Número " + numero + " copiado.");
-            if(banco === 'Nequi') window.location.href = "nequi://";
+            alert("Nequi " + num + " copiado. Redirigiendo...");
+            window.location.href = "nequi://";
         }
 
-        function abrirInventarioSeguro() {
-            let pass = prompt("Introduce la clave para acceder:");
+        function accesoAdmin() {
+            let pass = prompt("Clave de Administrador:");
             if (pass === "1996") {
-                let s = document.getElementById("seccionPrivada");
-                s.style.display = (s.style.display === "block") ? "none" : "block";
+                let p = document.getElementById("panelAdmin");
+                p.style.display = (p.style.display === "block") ? "none" : "block";
+                p.scrollIntoView({ behavior: "smooth" });
             } else {
                 alert("Clave incorrecta ❌");
             }
@@ -225,9 +205,9 @@
         }
 
         function borrarHistorial() {
-            if(confirm("¿Seguro que quieres borrar todo el historial del día?")) {
+            if(confirm("¿Borrar todas las ventas de hoy?")) {
                 db.ref('historial_ventas').remove();
-                alert("Historial limpio.");
+                alert("Día reiniciado.");
                 location.reload();
             }
         }
