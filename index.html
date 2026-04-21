@@ -68,6 +68,33 @@
             <h3>Disponible En Nevera</h3>
             <table id="tablaInventario"></table>
 
+       <style>
+    /* ... Nueva prueba -- tus otros estilos ... */
+
+    .alerta-stock { 
+        color: #dc3545 !important; 
+        font-weight: bold; 
+        background-color: #ffeef0;
+    }
+           function dibujarTabla() {
+            let tabla = document.getElementById("tablaInventario");
+            tabla.innerHTML = "<tr><th>Fruta</th><th>Stock</th></tr>";
+            
+            for (let fruta in inventario) {
+                let stock = inventario[fruta];
+                
+                // Si el stock es menor a 2, le ponemos la clase 'alerta-stock'
+                // de lo contrario, no le ponemos ninguna clase (vacío)
+                let clase = (stock < 2) ? 'class="alerta-stock"' : '';
+                
+                tabla.innerHTML += '<tr><td>' + fruta + '</td><td ' + clase + '>' + stock + ' lb</td></tr>';
+            }
+        }
+           
+ /* ... Nueva prueba -- tus otros estilos ... */
+           
+</style>
+
             <h3>Historial de Ventas</h3>
             <div id="listaHistorial">No hay registros.</div>
         </div>
