@@ -13,42 +13,65 @@
             font-family: 'Segoe UI', sans-serif; 
             margin: 0; 
             padding: 15px;
+            /* FONDO DE FRUTAS */
             background: url('https://img.freepik.com/vector-gratis/fondo-frutas-diseno-plano-dibujado-mano_23-2148961737.jpg') no-repeat center center fixed; 
             background-size: cover;
         }
 
         .container { 
             max-width: 420px; 
-            margin: 20px auto; 
-            background: rgba(255, 255, 255, 0.96); 
+            margin: 10px auto; 
+            /* EFECTO TRANSPARENTE (CRISTAL) */
+            background: rgba(255, 255, 255, 0.85); 
             padding: 25px; 
-            border-radius: 25px; 
+            border-radius: 30px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px); /* Desenfoque del fondo */
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
-        h2, h3 { text-align: center; color: #1a73e8; margin-top: 0; }
+        h2, h3 { text-align: center; color: #1557b0; margin-top: 0; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
         
-        .stock-info { background: #fff3cd; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
+        .stock-info { background: rgba(255, 243, 205, 0.9); padding: 12px; border-radius: 15px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
         
-        label { font-weight: 600; display: block; margin-top: 15px; color: #333; }
-        input, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        label { font-weight: 700; display: block; margin-top: 15px; color: #1557b0; }
         
-        .total-box { margin-top: 15px; padding: 15px; background: #e8f0fe; border-radius: 10px; text-align: center; border: 1px solid #1a73e8; }
-        .total-box span { font-size: 28px; font-weight: bold; color: #1a73e8; }
+        /* INPUTS TRANSPARENTES */
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 8px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            background: rgba(255, 255, 255, 0.7);
+            box-sizing: border-box; 
+            font-size: 16px; 
+            font-weight: 500;
+        }
+        
+        .total-box { 
+            margin-top: 15px; 
+            padding: 15px; 
+            background: rgba(25, 118, 210, 0.1); 
+            border-radius: 15px; 
+            text-align: center; 
+            border: 1px solid #1a73e8; 
+        }
+        .total-box span { font-size: 32px; font-weight: bold; color: #1a73e8; }
 
-        .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(40,167,69,0.3); }
+        .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(255,0,114,0.3); }
 
-        /* TABLA SIEMPRE VISIBLE */
-        .seccion-inventario { margin-top: 25px; border-top: 2px solid #eee; padding-top: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 10px; overflow: hidden; font-size: 14px; }
-        table th, table td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        /* BOTONES DESPLEGABLES */
+        .btn-desplegable { width: 100%; padding: 12px; background: rgba(21, 87, 176, 0.8); color: white; border: none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .btn-admin { width: 100%; padding: 12px; background: rgba(95, 99, 104, 0.8); color: white; border: none; border-radius: 12px; margin-top: 10px; cursor: pointer; font-weight: bold; font-size: 13px; }
+
+        .seccion-oculta { display: none; margin-top: 15px; background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; }
+
+        table { width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.9); border-radius: 10px; overflow: hidden; }
+        table th, table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         .alerta-stock { color: #dc3545 !important; font-weight: bold; background-color: #ffeef0; }
 
-        /* BOTÓN DE ADMINISTRACIÓN */
-        .btn-admin { width: 100%; padding: 12px; background: #5f6368; color: white; border: none; border-radius: 10px; margin-top: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        
-        #panelAdmin { display: none; margin-top: 15px; background: #f1f3f4; padding: 15px; border-radius: 15px; border: 1px solid #ccc; }
         .log-item { background: white; padding: 8px; border-radius: 8px; margin-bottom: 5px; border-left: 4px solid #28a745; font-size: 12px; }
     </style>
 </head>
@@ -71,35 +94,34 @@
             <option value="Tomate de Árbol">Tomate de Árbol 🍅</option>
         </select>
 
-        <label>Libras:</label>
+        <label>Peso en Libras:</label>
         <input type="number" id="cantidad" placeholder="0.0" step="0.1" oninput="calcularPrecio()">
 
         <div class="total-box">
-            Total Cobrar:<br>
+            Total a Cobrar:<br>
             <span id="displayTotal">$ 0</span>
         </div>
 
         <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR</button>
         <button class="btn-nequi" onclick="copiarNequi()">NEQUI</button>
 
-        <div class="seccion-inventario">
-            <h3>📦Disponible en Nevera</h3>
+        <button class="btn-desplegable" onclick="toggleSeccion('inventarioSeccion')">📂 Disponible en Nevera</button>
+        <div id="inventarioSeccion" class="seccion-oculta">
             <table id="tablaInventario"></table>
         </div>
 
         <button class="btn-admin" onclick="accesoAdmin()">⚙️ Panel de Administración</button>
 
-        <div id="panelAdmin">
-            <h4 style="margin:0 0 10px 0; color:#444;">📥 Cargar Mercancía</h4>
-            <input type="number" id="cantidadNueva" placeholder="Lbs que llegaron">
+        <div id="panelAdmin" class="seccion-oculta">
+            <h4 style="margin:0 0 10px 0;">📥 Cargar Mercancía</h4>
+            <input type="number" id="cantidadNueva" placeholder="Lbs recibidas">
             <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; margin-top:8px; font-weight:bold;">Sumar al Stock</button>
 
-            <h4 style="margin:20px 0 10px 0; color:#444;">💰 Cierre de Caja</h4>
+            <h4 style="margin:20px 0 10px 0;">💰 Cierre de Caja</h4>
             <div id="listaHistorial"></div>
-            <p id="resultadoCierre" style="font-size:22px; font-weight:bold; color:#1a73e8; text-align:center; margin:10px 0;">$ 0</p>
+            <p id="resultadoCierre" style="font-size:24px; font-weight:bold; color:#1a73e8; text-align:center;">$ 0</p>
             <button onclick="hacerCierreCaja()" style="width:100%; background:#1a73e8; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold;">Calcular Total</button>
-            
-            <button onclick="borrarHistorial()" style="margin-top:20px; width:100%; background:none; border:none; color:red; cursor:pointer; font-size:11px; font-weight:bold;">REINICIAR DÍA (BORRAR TODO)</button>
+            <button onclick="borrarHistorial()" style="margin-top:20px; width:100%; background:none; border:none; color:red; cursor:pointer; font-size:11px; font-weight:bold;">REINICIAR DÍA</button>
         </div>
     </div>
 
@@ -140,7 +162,7 @@
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
-            document.getElementById("avisoStock").innerText = "Stock: " + stock + " lb de " + p;
+            document.getElementById("avisoStock").innerText = "Hay " + stock + " lb de " + p;
         }
 
         function dibujarTabla() {
@@ -156,12 +178,12 @@
         function guardarVenta() {
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
-            if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) { alert("Verifica la cantidad"); return; }
+            if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) { alert("Verifica cantidad"); return; }
             db.ref('inventario/' + p).set(Math.round((inventario[p] - cant)*100)/100);
             db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: cant * PRECIO_UNIDAD, fecha: new Date().toLocaleString() });
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
-            alert("Venta registrada ✅");
+            alert("Venta guardada ✅");
         }
 
         function copiarNequi() {
@@ -172,16 +194,19 @@
             input.select();
             document.execCommand("copy");
             document.body.removeChild(input);
-            alert("Nequi " + num + " copiado. Redirigiendo...");
+            alert("Nequi " + num + " copiado.");
             window.location.href = "nequi://";
         }
 
+        function toggleSeccion(id) {
+            let s = document.getElementById(id);
+            s.style.display = (s.style.display === "block") ? "none" : "block";
+        }
+
         function accesoAdmin() {
-            let pass = prompt("Clave de Administrador:");
+            let pass = prompt("Clave:");
             if (pass === "1996") {
-                let p = document.getElementById("panelAdmin");
-                p.style.display = (p.style.display === "block") ? "none" : "block";
-                p.scrollIntoView({ behavior: "smooth" });
+                toggleSeccion('panelAdmin');
             } else {
                 alert("Clave incorrecta ❌");
             }
@@ -205,9 +230,8 @@
         }
 
         function borrarHistorial() {
-            if(confirm("¿Borrar todas las ventas de hoy?")) {
+            if(confirm("¿Borrar historial de hoy?")) {
                 db.ref('historial_ventas').remove();
-                alert("Día reiniciado.");
                 location.reload();
             }
         }
