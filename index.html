@@ -83,16 +83,16 @@
 
         <label>Fruta:</label>
         <select id="producto" onchange="actualizarVistaStock()">
-            <option value="Guanabana">Guanabana 🫒</option>
+            <option value="Guanabana">Guanábana 🟢</option>
             <option value="Pera">Mora 🍇</option>
             <option value="Mora">Pera 🍐</option>
             <option value="Mango">Mango 🥭</option>
             <option value="Durazno">Durazno 🍑</option>
             <option value="Guayaba">Guayaba 🟡</option>
-            <option value="Lulo">Lulo 🍈</option>
+            <option value="Lulo">Lulo 🥝</option>
             <option value="Fresa">Fresa 🍓</option>
             <option value="Maracuya">Maracuya 🍊</option>
-            <option value="Tomate de Árbol">Tomate de Árbol 🍅</option>
+            <option value="Tomate de Árbol">Tomate de árbol 🍅</option>
         </select>
 
         <label>Peso en Libras:</label>
@@ -114,7 +114,7 @@
 
         <div id="panelAdmin" class="seccion-oculta">
             <h4 style="margin:0 0 10px 0;">📥 Cargar Mercancía</h4>
-            <input type="number" id="cantidadNueva" placeholder="Lbs recibidas">
+            <input type="number" id="cantidadNueva" placeholder="und recibidas">
             <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; margin-top:8px; font-weight:bold;">Sumar al Stock</button>
 
             <h4 style="margin:20px 0 10px 0;">💰 Cierre de Caja</h4>
@@ -149,7 +149,7 @@
             cont.innerHTML = "";
             if (data) {
                 Object.values(data).reverse().forEach(v => {
-                    cont.innerHTML += `<div class="log-item">${v.fruta}: ${v.cantidad}lb - $${v.total.toLocaleString()}</div>`;
+                    cont.innerHTML += `<div class="log-item">${v.fruta}: ${v.cantidad}und - $${v.total.toLocaleString()}</div>`;
                 });
             }
         });
@@ -162,7 +162,7 @@
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
-            document.getElementById("avisoStock").innerText = "Hay " + stock + " lb de " + p;
+            document.getElementById("avisoStock").innerText = "Hay " + stock + " und de " + p;
         }
 
         function dibujarTabla() {
@@ -171,7 +171,7 @@
             for (let f in inventario) {
                 let s = inventario[f];
                 let c = (s < 2) ? 'class="alerta-stock"' : '';
-                tabla.innerHTML += `<tr><td>${f}</td><td ${c}>${s} lb</td></tr>`;
+                tabla.innerHTML += `<tr><td>${f}</td><td ${c}>${s} und</td></tr>`;
             }
         }
 
