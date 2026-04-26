@@ -60,7 +60,6 @@
         .total-box span { font-size: 32px; font-weight: bold; color: #1a73e8; }
 
         .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(40,167,69,0.3); }
-        .btn-nequi { width: 100%; padding: 15px; background: #ff0072; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(255,0,114,0.3); }
 
         /* BOTONES DESPLEGABLES */
         .btn-desplegable { width: 100%; padding: 12px; background: rgba(21, 87, 176, 0.8); color: white; border: none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: bold; }
@@ -85,7 +84,8 @@
         <label>Fruta:</label>
         <select id="producto" onchange="actualizarVistaStock()">
             <option value="Guanabana">Guanabana 🫒</option>
-            <option value="Pera">Pera 🍐</option>
+            <option value="Pera">Mora 🍇</option>
+            <option value="Mora">Pera 🍐</option>
             <option value="Mango">Mango 🥭</option>
             <option value="Durazno">Durazno 🍑</option>
             <option value="Guayaba">Guayaba 🟡</option>
@@ -104,7 +104,6 @@
         </div>
 
         <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR</button>
-        <button class="btn-nequi" onclick="copiarNequi()">NEQUI</button>
 
         <button class="btn-desplegable" onclick="toggleSeccion('inventarioSeccion')">📂 Disponible en Nevera</button>
         <div id="inventarioSeccion" class="seccion-oculta">
@@ -187,17 +186,6 @@
             alert("Venta guardada ✅");
         }
 
-        function copiarNequi() {
-            let num = "3114413297";
-            let input = document.createElement("input");
-            input.value = num;
-            document.body.appendChild(input);
-            input.select();
-            document.execCommand("copy");
-            document.body.removeChild(input);
-            alert("Nequi " + num + " copiado.");
-            window.location.href = "nequi://";
-        }
 
         function toggleSeccion(id) {
             let s = document.getElementById(id);
