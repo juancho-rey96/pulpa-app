@@ -9,69 +9,231 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
     <style>
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; 
-            padding: 15px;
-            /* FONDO DE FRUTAS */
-            background: url('https://img.freepik.com/vector-gratis/fondo-frutas-diseno-plano-dibujado-mano_23-2148961737.jpg') no-repeat center center fixed; 
-            background-size: cover;
+        :root {
+            --primary: #1557b0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --nequi: #E10098; /* Color oficial Nequi */
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
 
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px 15px;
+            background: url('https://img.freepik.com/vector-gratis/fondo-frutas-diseno-plano-dibujado-mano_23-2148961737.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            color: #333;
+        }
+
+        /* EFECTO GLASSMORPHISM MEJORADO */
         .container { 
             max-width: 420px; 
-            margin: 10px auto; 
-            /* EFECTO TRANSPARENTE (CRISTAL) */
-            background: rgba(255, 255, 255, 0.85); 
-            padding: 25px; 
-            border-radius: 30px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px); /* Desenfoque del fondo */
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto; 
+            background: var(--glass-bg); 
+            padding: 30px 25px; 
+            border-radius: 24px; 
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
         }
         
-        h2, h3 { text-align: center; color: #1557b0; margin-top: 0; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
+        h2, h3, h4 { 
+            text-align: center; 
+            color: var(--primary); 
+            margin-top: 0; 
+            text-shadow: 0 2px 4px rgba(255,255,255,0.5); 
+            font-weight: 800;
+        }
         
-        .stock-info { background: rgba(255, 243, 205, 0.9); padding: 12px; border-radius: 15px; text-align: center; font-weight: bold; color: #856404; margin-bottom: 20px; border: 1px solid #ffeeba; }
+        .stock-info { 
+            background: rgba(255, 243, 205, 0.7); 
+            backdrop-filter: blur(5px);
+            padding: 12px; 
+            border-radius: 12px; 
+            text-align: center; 
+            font-weight: 700; 
+            color: #856404; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255, 238, 186, 0.8); 
+            transition: all 0.3s ease;
+        }
         
-        label { font-weight: 700; display: block; margin-top: 15px; color: #1557b0; }
+        label { 
+            font-weight: 700; 
+            display: block; 
+            margin-top: 15px; 
+            color: #113f82; 
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
         
-        /* INPUTS TRANSPARENTES */
+        /* INPUTS ESTILO CRISTAL */
         input, select { 
             width: 100%; 
-            padding: 12px; 
+            padding: 14px; 
             margin-top: 8px; 
             border-radius: 12px; 
-            border: 1px solid rgba(0,0,0,0.1); 
-            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border); 
+            background: rgba(255, 255, 255, 0.5);
             box-sizing: border-box; 
             font-size: 16px; 
-            font-weight: 500;
+            font-weight: 600;
+            color: #333;
+            outline: none;
+            transition: background 0.3s, border 0.3s;
+        }
+
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: var(--primary);
         }
         
         .total-box { 
-            margin-top: 15px; 
-            padding: 15px; 
-            background: rgba(25, 118, 210, 0.1); 
-            border-radius: 15px; 
+            margin-top: 20px; 
+            padding: 20px; 
+            background: rgba(21, 87, 176, 0.15); 
+            border-radius: 16px; 
             text-align: center; 
-            border: 1px solid #1a73e8; 
+            border: 1px solid rgba(21, 87, 176, 0.3); 
         }
-        .total-box span { font-size: 32px; font-weight: bold; color: #1a73e8; }
 
-        .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(40,167,69,0.3); }
+        .total-box span { 
+            display: block;
+            font-size: 38px; 
+            font-weight: 900; 
+            color: var(--primary); 
+            margin-top: 5px;
+        }
 
-        /* BOTONES DESPLEGABLES */
-        .btn-desplegable { width: 100%; padding: 12px; background: rgba(21, 87, 176, 0.8); color: white; border: none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: bold; }
-        .btn-admin { width: 100%; padding: 12px; background: rgba(95, 99, 104, 0.8); color: white; border: none; border-radius: 12px; margin-top: 10px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        /* METODO DE PAGO */
+        .pago-metodo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
 
-        .seccion-oculta { display: none; margin-top: 15px; background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; }
+        .badge-nequi {
+            background: var(--nequi);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(225, 0, 152, 0.3);
+        }
 
-        table { width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.9); border-radius: 10px; overflow: hidden; }
-        table th, table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .alerta-stock { color: #dc3545 !important; font-weight: bold; background-color: #ffeef0; }
+        /* BOTONES */
+        button {
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        button:active { transform: scale(0.98); }
 
-        .log-item { background: white; padding: 8px; border-radius: 8px; margin-bottom: 5px; border-left: 4px solid #28a745; font-size: 12px; }
+        .btn-guardar { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--success); 
+            color: white; 
+            border: none; 
+            border-radius: 14px; 
+            font-size: 18px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            box-shadow: 0 4px 15px rgba(40,167,69,0.4); 
+        }
+
+        .btn-desplegable { 
+            width: 100%; 
+            padding: 14px; 
+            background: rgba(21, 87, 176, 0.7); 
+            backdrop-filter: blur(5px);
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 12px; 
+            margin-top: 20px; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+
+        .btn-admin { 
+            width: 100%; 
+            padding: 14px; 
+            background: rgba(60, 64, 67, 0.7); 
+            backdrop-filter: blur(5px);
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 12px; 
+            margin-top: 10px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 14px; 
+        }
+
+        .seccion-oculta { 
+            display: none; 
+            margin-top: 15px; 
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 1px solid var(--glass-border);
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: rgba(255, 255, 255, 0.6); 
+            border-radius: 10px; 
+            overflow: hidden; 
+        }
+        table th { background: rgba(21, 87, 176, 0.8); color: white; padding: 12px; }
+        table td { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px; font-weight: 600; }
+        .alerta-stock { color: var(--danger) !important; background-color: rgba(220, 53, 69, 0.1); }
+
+        .log-item { 
+            background: rgba(255,255,255,0.7); 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            border-left: 4px solid var(--success); 
+            font-size: 13px; 
+            font-weight: 500;
+        }
+
+        /* SISTEMA DE NOTIFICACIONES TOAST */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
     </style>
 </head>
 <body>
@@ -79,9 +241,9 @@
     <div class="container">
         <h2>Registro de Venta</h2>
         
-        <div class="stock-info" id="avisoStock">Conectando...</div>
+        <div class="stock-info" id="avisoStock">Conectando con el inventario...</div>
 
-        <label>Fruta:</label>
+        <label>Seleccionar Fruta:</label>
         <select id="producto" onchange="actualizarVistaStock()">
             <option value="Guanabana">Guanábana 🟢</option>
             <option value="Pera">Pera 🍐</option>
@@ -91,41 +253,50 @@
             <option value="Guayaba">Guayaba 🟡</option>
             <option value="Lulo">Lulo 🥝</option>
             <option value="Fresa">Fresa 🍓</option>
-            <option value="Maracuya">Maracuya 🍊</option>
-            <option value="Tomate de Árbol">Tomate de árbol 🍅</option>
+            <option value="Maracuya">Maracuyá 🍊</option>
+            <option value="Tomate de Arbol">Tomate de árbol 🍅</option>
         </select>
 
-        <label>Cantidad de Unidades:</label>
-        <input type="number" id="cantidad" placeholder="0.0" step="0.1" oninput="calcularPrecio()">
+        <label>Cantidad (Unidades):</label>
+        <input type="number" id="cantidad" placeholder="Ej: 1.5" step="0.1" oninput="calcularPrecio()">
 
         <div class="total-box">
-            Total a Cobrar:<br>
+            Total a Cobrar
             <span id="displayTotal">$ 0</span>
         </div>
 
-        <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR</button>
+        <div class="pago-metodo">
+            Recibe pago vía: <span class="badge-nequi">NEQUI</span>
+        </div>
 
-        <button class="btn-desplegable" onclick="toggleSeccion('inventarioSeccion')">📂 Disponible en Nevera</button>
+        <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR VENTA</button>
+
+        <button class="btn-desplegable" onclick="toggleSeccion('inventarioSeccion')">👁️ Ver Disponible en Nevera</button>
         <div id="inventarioSeccion" class="seccion-oculta">
             <table id="tablaInventario"></table>
         </div>
 
-        <button class="btn-admin" onclick="accesoAdmin()">⚙️ Panel de Administración</button>
+        <button class="btn-admin" onclick="accesoAdmin()">⚙️ Carga de Mercancía y Cierre</button>
 
         <div id="panelAdmin" class="seccion-oculta">
-            <h4 style="margin:0 0 10px 0;">📥 Cargar Mercancía</h4>
-            <input type="number" id="cantidadNueva" placeholder="und recibidas">
-            <button onclick="sumarStock()" style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; margin-top:8px; font-weight:bold;">Sumar al Stock</button>
+            <h4>📥 Cargar Nueva Mercancía</h4>
+            <input type="number" id="cantidadNueva" placeholder="Unidades recibidas">
+            <button onclick="sumarStock()" style="width:100%; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; margin-top:8px; font-weight:bold; cursor:pointer;">Sumar al Stock</button>
 
-            <h4 style="margin:20px 0 10px 0;">💰 Cierre de Caja</h4>
-            <div id="listaHistorial"></div>
-            <p id="resultadoCierre" style="font-size:24px; font-weight:bold; color:#1a73e8; text-align:center;">$ 0</p>
-            <button onclick="hacerCierreCaja()" style="width:100%; background:#1a73e8; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold;">Calcular Total</button>
-            <button onclick="borrarHistorial()" style="margin-top:20px; width:100%; background:none; border:none; color:red; cursor:pointer; font-size:11px; font-weight:bold;">REINICIAR DÍA</button>
+            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 25px 0;">
+
+            <h4>💰 Cierre de Caja Diario</h4>
+            <div id="listaHistorial" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;"></div>
+            <p id="resultadoCierre" style="font-size:28px; font-weight:900; color:var(--primary); text-align:center; margin: 10px 0;">$ 0</p>
+            <button onclick="hacerCierreCaja()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;">Calcular Total del Día</button>
+            <button onclick="borrarHistorial()" style="margin-top:15px; width:100%; background:rgba(220, 53, 69, 0.1); border:1px solid var(--danger); color:var(--danger); padding:10px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:bold;">⚠️ REINICIAR DÍA (Borrar Ventas)</button>
         </div>
     </div>
 
+    <div id="toast">Notificación</div>
+
     <script>
+        // CONFIGURACIÓN FIREBASE (Mantenida exactamente igual)
         const firebaseConfig = {
             apiKey: "AIzaSyAYJ15P0bWb35dY8sbNuC0_4xcYFsuaz7A",
             authDomain: "pulpaapp-3ec88.firebaseapp.com",
@@ -141,36 +312,67 @@
         let inventario = {};
         const PRECIO_UNIDAD = 5000;
 
-        db.ref('inventario').on('value', (s) => { inventario = s.val() || {}; actualizarVistaStock(); dibujarTabla(); });
+        // Formateador de moneda colombiana
+        const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
-        db.ref('historial_ventas').limitToLast(5).on('value', (s) => {
+        // Función para mostrar notificaciones estilo Toast
+        function mostrarToast(mensaje, colorFondo = "#333") {
+            const toast = document.getElementById("toast");
+            toast.innerText = mensaje;
+            toast.style.backgroundColor = colorFondo;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // Carga de inventario en tiempo real
+        db.ref('inventario').on('value', (s) => { 
+            inventario = s.val() || {}; 
+            actualizarVistaStock(); 
+            dibujarTabla(); 
+        });
+
+        // Carga de historial en tiempo real
+        db.ref('historial_ventas').limitToLast(10).on('value', (s) => {
             const data = s.val();
             const cont = document.getElementById("listaHistorial");
             cont.innerHTML = "";
             if (data) {
                 Object.values(data).reverse().forEach(v => {
-                    cont.innerHTML += `<div class="log-item">${v.fruta}: ${v.cantidad}und - $${v.total.toLocaleString()}</div>`;
+                    cont.innerHTML += `<div class="log-item">🥭 ${v.fruta}: ${v.cantidad} und - <strong>${formatoCOP.format(v.total)}</strong></div>`;
                 });
             }
         });
 
         function calcularPrecio() {
             let cant = parseFloat(document.getElementById("cantidad").value) || 0;
-            document.getElementById("displayTotal").innerText = "$ " + (cant * PRECIO_UNIDAD).toLocaleString();
+            document.getElementById("displayTotal").innerText = formatoCOP.format(cant * PRECIO_UNIDAD);
         }
 
         function actualizarVistaStock() {
             let p = document.getElementById("producto").value;
             let stock = inventario[p] || 0;
-            document.getElementById("avisoStock").innerText = "Hay " + stock + " und de " + p;
+            let aviso = document.getElementById("avisoStock");
+            
+            aviso.innerText = `Disponible: ${stock} unidades de ${p}`;
+            
+            // Cambiar color si hay poco stock
+            if(stock <= 2) {
+                aviso.style.backgroundColor = "rgba(220, 53, 69, 0.8)";
+                aviso.style.color = "white";
+                aviso.style.borderColor = "#dc3545";
+            } else {
+                aviso.style.backgroundColor = "rgba(255, 243, 205, 0.7)";
+                aviso.style.color = "#856404";
+                aviso.style.borderColor = "rgba(255, 238, 186, 0.8)";
+            }
         }
 
         function dibujarTabla() {
             let tabla = document.getElementById("tablaInventario");
-            tabla.innerHTML = "<tr><th>Fruta</th><th>Stock</th></tr>";
+            tabla.innerHTML = "<tr><th>Sabor de Pulpa</th><th>Stock Actual</th></tr>";
             for (let f in inventario) {
                 let s = inventario[f];
-                let c = (s < 2) ? 'class="alerta-stock"' : '';
+                let c = (s <= 2) ? 'class="alerta-stock"' : '';
                 tabla.innerHTML += `<tr><td>${f}</td><td ${c}>${s} und</td></tr>`;
             }
         }
@@ -178,50 +380,87 @@
         function guardarVenta() {
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidad").value);
-            if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) { alert("Verifica cantidad"); return; }
+            
+            if (isNaN(cant) || cant <= 0) { 
+                mostrarToast("⚠️ Ingresa una cantidad válida", "#dc3545"); 
+                return; 
+            }
+            if (cant > (inventario[p] || 0)) {
+                mostrarToast(`❌ No hay suficiente ${p} en la nevera`, "#dc3545"); 
+                return;
+            }
+
+            // Actualizar stock y guardar registro
             db.ref('inventario/' + p).set(Math.round((inventario[p] - cant)*100)/100);
-            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: cant * PRECIO_UNIDAD, fecha: new Date().toLocaleString() });
+            db.ref('historial_ventas').push({ 
+                fruta: p, 
+                cantidad: cant, 
+                total: cant * PRECIO_UNIDAD, 
+                fecha: new Date().toLocaleString() 
+            });
+            
+            // Limpiar campos
             document.getElementById("cantidad").value = "";
             document.getElementById("displayTotal").innerText = "$ 0";
-            alert("Venta guardada ✅");
+            mostrarToast("✅ Venta registrada correctamente", "#28a745");
         }
-
 
         function toggleSeccion(id) {
             let s = document.getElementById(id);
-            s.style.display = (s.style.display === "block") ? "none" : "block";
+            if (s.style.display === "block") {
+                s.style.display = "none";
+            } else {
+                s.style.display = "block";
+            }
         }
 
+        // LÓGICA DE SEGURIDAD EXCLUSIVA PARA CARGA Y CIERRE
         function accesoAdmin() {
-            let pass = prompt("Clave:");
+            let s = document.getElementById('panelAdmin');
+            if (s.style.display === "block") {
+                s.style.display = "none"; // Permite cerrar el panel sin pedir clave
+                return;
+            }
+
+            let pass = prompt("🔒 Ingresa la clave para Carga de Mercancía y Cierre de Caja:");
             if (pass === "1996") {
-                toggleSeccion('panelAdmin');
-            } else {
-                alert("Clave incorrecta ❌");
+                s.style.display = "block";
+                mostrarToast("🔓 Acceso concedido", "#1557b0");
+            } else if (pass !== null) {
+                mostrarToast("❌ Clave incorrecta", "#dc3545");
             }
         }
 
         function sumarStock() {
             let p = document.getElementById("producto").value;
             let cant = parseFloat(document.getElementById("cantidadNueva").value);
-            if(isNaN(cant) || cant <= 0) return;
+            
+            if(isNaN(cant) || cant <= 0) {
+                mostrarToast("⚠️ Ingresa una cantidad válida para sumar", "#ffc107");
+                return;
+            }
+            
             db.ref('inventario/' + p).set(Math.round(((inventario[p] || 0) + cant)*100)/100);
             document.getElementById("cantidadNueva").value = "";
-            alert("Stock actualizado 📥");
+            mostrarToast(`📥 Se agregaron ${cant} und de ${p}`, "#28a745");
         }
 
         function hacerCierreCaja() {
             db.ref('historial_ventas').once('value', (s) => {
                 let total = 0;
-                if(s.val()) Object.values(s.val()).forEach(v => total += v.total);
-                document.getElementById("resultadoCierre").innerText = "$ " + total.toLocaleString();
+                if(s.val()) {
+                    Object.values(s.val()).forEach(v => total += v.total);
+                }
+                document.getElementById("resultadoCierre").innerText = formatoCOP.format(total);
+                mostrarToast("💰 Cierre calculado con éxito", "#1557b0");
             });
         }
 
         function borrarHistorial() {
-            if(confirm("¿Borrar historial de hoy?")) {
+            if(confirm("⚠️ ¿Estás totalmente seguro de borrar todas las ventas de hoy? Esto pondrá la caja en $0.")) {
                 db.ref('historial_ventas').remove();
-                location.reload();
+                document.getElementById("resultadoCierre").innerText = "$ 0";
+                mostrarToast("🗑️ Historial del día reiniciado", "#dc3545");
             }
         }
     </script>
