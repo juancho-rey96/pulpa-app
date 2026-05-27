@@ -7,13 +7,14 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
 
     <style>
         :root {
             --primary: #1557b0;
             --success: #28a745;
             --danger: #dc3545;
-            --nequi: #E10098; /* Color oficial Nequi */
+            --nequi: #E10098;
             --glass-bg: rgba(255, 255, 255, 0.25);
             --glass-border: rgba(255, 255, 255, 0.4);
             --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
@@ -28,7 +29,6 @@
             color: #333;
         }
 
-        /* EFECTO GLASSMORPHISM MEJORADO */
         .container { 
             max-width: 420px; 
             margin: 0 auto; 
@@ -41,262 +41,126 @@
             border: 1px solid var(--glass-border);
         }
         
-        h2, h3, h4 { 
-            text-align: center; 
-            color: var(--primary); 
-            margin-top: 0; 
-            text-shadow: 0 2px 4px rgba(255,255,255,0.5); 
-            font-weight: 800;
-        }
+        h2, h3, h4 { text-align: center; color: var(--primary); margin-top: 0; text-shadow: 0 2px 4px rgba(255,255,255,0.5); font-weight: 800; }
         
-        .stock-info { 
-            background: rgba(255, 243, 205, 0.7); 
-            backdrop-filter: blur(5px);
-            padding: 12px; 
-            border-radius: 12px; 
-            text-align: center; 
-            font-weight: 700; 
-            color: #856404; 
-            margin-bottom: 20px; 
-            border: 1px solid rgba(255, 238, 186, 0.8); 
-            transition: all 0.3s ease;
-        }
+        .stock-info { background: rgba(255, 243, 205, 0.7); backdrop-filter: blur(5px); padding: 12px; border-radius: 12px; text-align: center; font-weight: 700; color: #856404; margin-bottom: 20px; border: 1px solid rgba(255, 238, 186, 0.8); }
         
-        label { 
-            font-weight: 700; 
-            display: block; 
-            margin-top: 15px; 
-            color: #113f82; 
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        label { font-weight: 700; display: block; margin-top: 15px; color: #113f82; font-size: 14px; text-transform: uppercase; }
         
-        /* INPUTS ESTILO CRISTAL */
-        input, select { 
-            width: 100%; 
-            padding: 14px; 
-            margin-top: 8px; 
-            border-radius: 12px; 
-            border: 1px solid var(--glass-border); 
-            background: rgba(255, 255, 255, 0.5);
-            box-sizing: border-box; 
-            font-size: 16px; 
-            font-weight: 600;
-            color: #333;
-            outline: none;
-            transition: background 0.3s, border 0.3s;
-        }
-
-        input:focus, select:focus {
-            background: rgba(255, 255, 255, 0.8);
-            border-color: var(--primary);
-        }
+        input, select { width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.5); box-sizing: border-box; font-size: 16px; font-weight: 600; color: #333; outline: none; }
+        input:focus, select:focus { background: rgba(255, 255, 255, 0.8); border-color: var(--primary); }
         
-        .total-box { 
-            margin-top: 20px; 
-            padding: 20px; 
-            background: rgba(21, 87, 176, 0.15); 
-            border-radius: 16px; 
-            text-align: center; 
-            border: 1px solid rgba(21, 87, 176, 0.3); 
-        }
+        .total-box { margin-top: 20px; padding: 20px; background: rgba(21, 87, 176, 0.15); border-radius: 16px; text-align: center; border: 1px solid rgba(21, 87, 176, 0.3); }
+        .total-box span { display: block; font-size: 38px; font-weight: 900; color: var(--primary); margin-top: 5px; }
 
-        .total-box span { 
-            display: block;
-            font-size: 38px; 
-            font-weight: 900; 
-            color: var(--primary); 
-            margin-top: 5px;
-        }
-
-        /* METODO DE PAGO */
-        .pago-metodo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .badge-nequi {
-            background: var(--nequi);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 8px rgba(225, 0, 152, 0.3);
-        }
-
-        /* BOTONES */
-        button {
-            transition: transform 0.1s, box-shadow 0.2s;
-        }
+        .badge-nequi { background: var(--nequi); color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+        
+        button { width: 100%; padding: 14px; border: none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: bold; transition: transform 0.1s; }
         button:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; font-size: 18px; box-shadow: 0 4px 15px rgba(40,167,69,0.4); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: rgba(220, 53, 69, 0.1); border: 1px solid var(--danger); color: var(--danger); }
 
-        .btn-guardar { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--success); 
-            color: white; 
-            border: none; 
-            border-radius: 14px; 
-            font-size: 18px; 
-            font-weight: 800; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            box-shadow: 0 4px 15px rgba(40,167,69,0.4); 
-        }
+        .seccion-oculta { display: none; margin-top: 15px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); }
+        
+        .log-item { background: rgba(255,255,255,0.7); padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; font-weight: 500; border-left: 4px solid var(--primary); }
+        .pedido-item { border-left: 4px solid var(--nequi); }
 
-        .btn-desplegable { 
-            width: 100%; 
-            padding: 14px; 
-            background: rgba(21, 87, 176, 0.7); 
-            backdrop-filter: blur(5px);
-            color: white; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 12px; 
-            margin-top: 20px; 
-            cursor: pointer; 
-            font-weight: bold; 
-        }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; font-weight: bold; color: var(--primary); }
+        .nav-bar span { cursor: pointer; text-decoration: underline; }
 
-        .btn-admin { 
-            width: 100%; 
-            padding: 14px; 
-            background: rgba(60, 64, 67, 0.7); 
-            backdrop-filter: blur(5px);
-            color: white; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 12px; 
-            margin-top: 10px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 14px; 
-        }
-
-        .seccion-oculta { 
-            display: none; 
-            margin-top: 15px; 
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(10px);
-            padding: 20px; 
-            border-radius: 16px; 
-            border: 1px solid var(--glass-border);
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            background: rgba(255, 255, 255, 0.6); 
-            border-radius: 10px; 
-            overflow: hidden; 
-        }
-        table th { background: rgba(21, 87, 176, 0.8); color: white; padding: 12px; }
-        table td { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px; font-weight: 600; }
-        .alerta-stock { color: var(--danger) !important; background-color: rgba(220, 53, 69, 0.1); }
-
-        .log-item { 
-            background: rgba(255,255,255,0.7); 
-            padding: 10px; 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            border-left: 4px solid var(--success); 
-            font-size: 13px; 
-            font-weight: 500;
-        }
-
-        /* SISTEMA DE NOTIFICACIONES TOAST */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-        }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Registro de Venta</h2>
-        
-        <div class="stock-info" id="avisoStock">Conectando con el inventario...</div>
-
-        <label>Seleccionar Fruta:</label>
-        <select id="producto" onchange="actualizarVistaStock()">
-            <option value="Guanabana">Guanábana 🟢</option>
-            <option value="Pera">Pera 🍐</option>
-            <option value="Mora">Mora 🍇</option>
-            <option value="Mango">Mango 🥭</option>
-            <option value="Durazno">Durazno 🍑</option>
-            <option value="Guayaba">Guayaba 🟡</option>
-            <option value="Lulo">Lulo 🥝</option>
-            <option value="Fresa">Fresa 🍓</option>
-            <option value="Maracuya">Maracuyá 🍊</option>
-            <option value="Tomate de Arbol">Tomate de árbol 🍅</option>
-        </select>
-
-        <label>Cantidad (Unidades):</label>
-        <input type="number" id="cantidad" placeholder="Ej: 1.5" step="0.1" oninput="calcularPrecio()">
-
-        <div class="total-box">
-            Total a Cobrar
-            <span id="displayTotal">$ 0</span>
+        <div id="navBar" class="nav-bar" style="display: none;">
+            <div id="userEmailDisplay">usuario@correo.com</div>
+            <span onclick="cerrarSesion()">Salir</span>
         </div>
 
-        <div class="pago-metodo">
-            Recibe pago vía: <span class="badge-nequi">NEQUI</span>
+        <div id="authContainer">
+            <h2>Bienvenido 🥭</h2>
+            <p style="text-align: center; font-weight: 600;">Inicia sesión para pedir o administrar</p>
+            
+            <label>Correo Electrónico:</label>
+            <input type="email" id="emailAuth" placeholder="tu@correo.com">
+            
+            <label>Contraseña:</label>
+            <input type="password" id="passAuth" placeholder="******">
+            
+            <button class="btn-primary" onclick="iniciarSesion()">Ingresar</button>
+            <button class="btn-outline" onclick="registrarUsuario()">Crear Cuenta Nueva</button>
         </div>
 
-        <button class="btn-guardar" onclick="guardarVenta()">✅ REGISTRAR VENTA</button>
+        <div id="clienteContainer" style="display: none;">
+            <h2>Hacer un Pedido</h2>
+            <div class="stock-info" id="avisoStockCliente">Revisando nevera...</div>
 
-        <button class="btn-desplegable" onclick="toggleSeccion('inventarioSeccion')">👁️ Ver Disponible en Nevera</button>
-        <div id="inventarioSeccion" class="seccion-oculta">
-            <table id="tablaInventario"></table>
+            <label>Quiero pedir:</label>
+            <select id="productoCliente" onchange="actualizarVistaStock('Cliente')">
+                <option value="Guanabana">Guanábana 🟢</option>
+                <option value="Pera">Pera 🍐</option>
+                <option value="Mora">Mora 🍇</option>
+                <option value="Mango">Mango 🥭</option>
+            </select>
+
+            <label>Cantidad (Unidades):</label>
+            <input type="number" id="cantidadCliente" placeholder="Ej: 2" step="1" oninput="calcularPrecioCliente()">
+
+            <label>Dirección o Teléfono de Contacto:</label>
+            <input type="text" id="contactoCliente" placeholder="Ej: Calle 123 / Cel: 300...">
+
+            <div class="total-box">
+                Total a Pagar
+                <span id="displayTotalCliente">$ 0</span>
+                <p style="font-size: 12px; color: #555;">Pago contra entrega o Nequi</p>
+            </div>
+
+            <button class="btn-success" onclick="enviarPedido()">📲 ENVIAR PEDIDO</button>
         </div>
 
-        <button class="btn-admin" onclick="accesoAdmin()">⚙️ Carga de Mercancía y Cierre</button>
+        <div id="adminContainer" style="display: none;">
+            <h2 style="color: var(--nequi);">Panel de Control</h2>
+            
+            <div class="seccion-oculta" style="display: block;">
+                <h4>Venta Presencial</h4>
+                <select id="productoAdmin" onchange="actualizarVistaStock('Admin')">
+                    <option value="Guanabana">Guanábana 🟢</option>
+                    <option value="Pera">Pera 🍐</option>
+                    <option value="Mora">Mora 🍇</option>
+                    <option value="Mango">Mango 🥭</option>
+                </select>
+                <input type="number" id="cantidadAdmin" placeholder="Cantidad" step="0.1">
+                <button class="btn-success" style="padding: 10px; font-size: 15px;" onclick="guardarVentaPOS()">✅ Vender (Pagado Nequi/Efectivo)</button>
+            </div>
 
-        <div id="panelAdmin" class="seccion-oculta">
-            <h4>📥 Cargar Nueva Mercancía</h4>
+            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0;">
+
+            <h4>🛵 Pedidos de Clientes</h4>
+            <div id="listaPedidos" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;"></div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0;">
+
+            <h4>📥 Cargar Mercancía</h4>
             <input type="number" id="cantidadNueva" placeholder="Unidades recibidas">
-            <button onclick="sumarStock()" style="width:100%; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; margin-top:8px; font-weight:bold; cursor:pointer;">Sumar al Stock</button>
+            <button class="btn-primary" onclick="sumarStock()">Sumar al Stock</button>
 
-            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 25px 0;">
-
-            <h4>💰 Cierre de Caja Diario</h4>
-            <div id="listaHistorial" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;"></div>
-            <p id="resultadoCierre" style="font-size:28px; font-weight:900; color:var(--primary); text-align:center; margin: 10px 0;">$ 0</p>
-            <button onclick="hacerCierreCaja()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;">Calcular Total del Día</button>
-            <button onclick="borrarHistorial()" style="margin-top:15px; width:100%; background:rgba(220, 53, 69, 0.1); border:1px solid var(--danger); color:var(--danger); padding:10px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:bold;">⚠️ REINICIAR DÍA (Borrar Ventas)</button>
+            <h4 style="margin-top: 20px;">💰 Cierre de Caja Diario</h4>
+            <div id="listaHistorial" style="max-height: 150px; overflow-y: auto;"></div>
+            <p id="resultadoCierre" style="font-size:28px; font-weight:900; color:var(--primary); text-align:center;">$ 0</p>
+            <button class="btn-outline" style="background: white;" onclick="hacerCierreCaja()">Calcular Total</button>
+            <button class="btn-danger" onclick="borrarHistorial()">⚠️ REINICIAR DÍA</button>
         </div>
     </div>
 
     <div id="toast">Notificación</div>
 
     <script>
-        // CONFIGURACIÓN FIREBASE (Mantenida exactamente igual)
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAYJ15P0bWb35dY8sbNuC0_4xcYFsuaz7A",
             authDomain: "pulpaapp-3ec88.firebaseapp.com",
@@ -309,159 +173,180 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
+        
         let inventario = {};
         const PRECIO_UNIDAD = 5000;
-
-        // Formateador de moneda colombiana
         const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
-        // Función para mostrar notificaciones estilo Toast
+        // --- COLOCA AQUÍ TU CORREO DE ADMINISTRADOR ---
+        const CORREO_ADMIN = "juanrodriguez110099@gmail.com"; 
+
         function mostrarToast(mensaje, colorFondo = "#333") {
             const toast = document.getElementById("toast");
-            toast.innerText = mensaje;
-            toast.style.backgroundColor = colorFondo;
-            toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            toast.innerText = mensaje; toast.style.backgroundColor = colorFondo; toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // Carga de inventario en tiempo real
+        // ================= SISTEMA DE USUARIOS =================
+        auth.onAuthStateChanged(user => {
+            document.getElementById("authContainer").style.display = "none";
+            document.getElementById("clienteContainer").style.display = "none";
+            document.getElementById("adminContainer").style.display = "none";
+
+            if (user) {
+                document.getElementById("navBar").style.display = "flex";
+                document.getElementById("userEmailDisplay").innerText = user.email;
+                
+                // Verificar si es Administrador o Cliente
+                if(user.email.toLowerCase() === CORREO_ADMIN.toLowerCase()) {
+                    document.getElementById("adminContainer").style.display = "block";
+                    cargarDatosAdmin();
+                } else {
+                    document.getElementById("clienteContainer").style.display = "block";
+                }
+            } else {
+                document.getElementById("navBar").style.display = "none";
+                document.getElementById("authContainer").style.display = "block";
+            }
+        });
+
+        function registrarUsuario() {
+            let email = document.getElementById("emailAuth").value;
+            let pass = document.getElementById("passAuth").value;
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then(() => mostrarToast("✅ Cuenta creada con éxito", "#28a745"))
+                .catch(err => mostrarToast("❌ Error: " + err.message, "#dc3545"));
+        }
+
+        function iniciarSesion() {
+            let email = document.getElementById("emailAuth").value;
+            let pass = document.getElementById("passAuth").value;
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => mostrarToast("🔓 Sesión iniciada", "#1557b0"))
+                .catch(err => mostrarToast("❌ Error: Verifica tus datos", "#dc3545"));
+        }
+
+        function cerrarSesion() { auth.signOut(); }
+
+        // ================= INVENTARIO GLOBAL =================
         db.ref('inventario').on('value', (s) => { 
             inventario = s.val() || {}; 
-            actualizarVistaStock(); 
-            dibujarTabla(); 
-        });
-
-        // Carga de historial en tiempo real
-        db.ref('historial_ventas').limitToLast(10).on('value', (s) => {
-            const data = s.val();
-            const cont = document.getElementById("listaHistorial");
-            cont.innerHTML = "";
-            if (data) {
-                Object.values(data).reverse().forEach(v => {
-                    cont.innerHTML += `<div class="log-item">🥭 ${v.fruta}: ${v.cantidad} und - <strong>${formatoCOP.format(v.total)}</strong></div>`;
-                });
+            if(auth.currentUser) {
+                actualizarVistaStock('Cliente');
+                actualizarVistaStock('Admin');
             }
         });
 
-        function calcularPrecio() {
-            let cant = parseFloat(document.getElementById("cantidad").value) || 0;
-            document.getElementById("displayTotal").innerText = formatoCOP.format(cant * PRECIO_UNIDAD);
-        }
-
-        function actualizarVistaStock() {
-            let p = document.getElementById("producto").value;
+        function actualizarVistaStock(vista) {
+            let selectId = vista === 'Cliente' ? 'productoCliente' : 'productoAdmin';
+            let avisoId = vista === 'Cliente' ? 'avisoStockCliente' : null;
+            
+            let el = document.getElementById(selectId);
+            if(!el) return;
+            let p = el.value;
             let stock = inventario[p] || 0;
-            let aviso = document.getElementById("avisoStock");
             
-            aviso.innerText = `Disponible: ${stock} unidades de ${p}`;
-            
-            // Cambiar color si hay poco stock
-            if(stock <= 2) {
-                aviso.style.backgroundColor = "rgba(220, 53, 69, 0.8)";
-                aviso.style.color = "white";
-                aviso.style.borderColor = "#dc3545";
-            } else {
-                aviso.style.backgroundColor = "rgba(255, 243, 205, 0.7)";
-                aviso.style.color = "#856404";
-                aviso.style.borderColor = "rgba(255, 238, 186, 0.8)";
+            if(avisoId) {
+                let aviso = document.getElementById(avisoId);
+                aviso.innerText = `Disponible: ${stock} unidades de ${p}`;
+                if(stock <= 2) { aviso.style.backgroundColor = "rgba(220, 53, 69, 0.8)"; aviso.style.color = "white"; } 
+                else { aviso.style.backgroundColor = "rgba(255, 243, 205, 0.7)"; aviso.style.color = "#856404"; }
             }
         }
 
-        function dibujarTabla() {
-            let tabla = document.getElementById("tablaInventario");
-            tabla.innerHTML = "<tr><th>Sabor de Pulpa</th><th>Stock Actual</th></tr>";
-            for (let f in inventario) {
-                let s = inventario[f];
-                let c = (s <= 2) ? 'class="alerta-stock"' : '';
-                tabla.innerHTML += `<tr><td>${f}</td><td ${c}>${s} und</td></tr>`;
-            }
+        // ================= LÓGICA DEL CLIENTE =================
+        function calcularPrecioCliente() {
+            let cant = parseFloat(document.getElementById("cantidadCliente").value) || 0;
+            document.getElementById("displayTotalCliente").innerText = formatoCOP.format(cant * PRECIO_UNIDAD);
         }
 
-        function guardarVenta() {
-            let p = document.getElementById("producto").value;
-            let cant = parseFloat(document.getElementById("cantidad").value);
+        function enviarPedido() {
+            let p = document.getElementById("productoCliente").value;
+            let cant = parseFloat(document.getElementById("cantidadCliente").value);
+            let contacto = document.getElementById("contactoCliente").value;
             
-            if (isNaN(cant) || cant <= 0) { 
-                mostrarToast("⚠️ Ingresa una cantidad válida", "#dc3545"); 
-                return; 
+            if (isNaN(cant) || cant <= 0 || contacto.trim() === "") { 
+                mostrarToast("⚠️ Llena cantidad y contacto", "#dc3545"); return; 
             }
             if (cant > (inventario[p] || 0)) {
-                mostrarToast(`❌ No hay suficiente ${p} en la nevera`, "#dc3545"); 
-                return;
+                mostrarToast(`❌ Solo hay ${inventario[p]} und en nevera`, "#dc3545"); return;
             }
 
-            // Actualizar stock y guardar registro
+            // Descontar inventario temporalmente y enviar pedido
             db.ref('inventario/' + p).set(Math.round((inventario[p] - cant)*100)/100);
-            db.ref('historial_ventas').push({ 
+            db.ref('pedidos_pendientes').push({ 
+                cliente: auth.currentUser.email,
+                contacto: contacto,
                 fruta: p, 
                 cantidad: cant, 
                 total: cant * PRECIO_UNIDAD, 
                 fecha: new Date().toLocaleString() 
             });
             
-            // Limpiar campos
-            document.getElementById("cantidad").value = "";
-            document.getElementById("displayTotal").innerText = "$ 0";
-            mostrarToast("✅ Venta registrada correctamente", "#28a745");
+            document.getElementById("cantidadCliente").value = "";
+            document.getElementById("contactoCliente").value = "";
+            document.getElementById("displayTotalCliente").innerText = "$ 0";
+            mostrarToast("✅ Pedido enviado. Pronto te contactaremos.", "#28a745");
         }
 
-        function toggleSeccion(id) {
-            let s = document.getElementById(id);
-            if (s.style.display === "block") {
-                s.style.display = "none";
-            } else {
-                s.style.display = "block";
-            }
+        // ================= LÓGICA DEL ADMINISTRADOR =================
+        function cargarDatosAdmin() {
+            // Cargar Historial de Ventas
+            db.ref('historial_ventas').limitToLast(10).on('value', (s) => {
+                const data = s.val(); const cont = document.getElementById("listaHistorial"); cont.innerHTML = "";
+                if (data) { Object.values(data).reverse().forEach(v => {
+                    cont.innerHTML += `<div class="log-item">🥭 ${v.fruta}: ${v.cantidad}u - <strong>${formatoCOP.format(v.total)}</strong></div>`;
+                });}
+            });
+
+            // Cargar Pedidos de Clientes
+            db.ref('pedidos_pendientes').on('value', (s) => {
+                const data = s.val(); const cont = document.getElementById("listaPedidos"); cont.innerHTML = "";
+                if (data) { Object.entries(data).reverse().forEach(([key, v]) => {
+                    cont.innerHTML += `<div class="log-item pedido-item">
+                        <strong>📦 ${v.fruta} x${v.cantidad}</strong><br>
+                        <small>De: ${v.contacto}</small><br>
+                        <button onclick="completarPedido('${key}', '${v.fruta}', ${v.cantidad}, ${v.total})" style="margin-top:5px; padding:5px; background:var(--success); color:white; border:none; border-radius:5px; width:100%;">Marcar Entregado y Cobrar</button>
+                    </div>`;
+                });}
+            });
         }
 
-        // LÓGICA DE SEGURIDAD EXCLUSIVA PARA CARGA Y CIERRE
-        function accesoAdmin() {
-            let s = document.getElementById('panelAdmin');
-            if (s.style.display === "block") {
-                s.style.display = "none"; // Permite cerrar el panel sin pedir clave
-                return;
-            }
-
-            let pass = prompt("🔒 Ingresa la clave para Carga de Mercancía y Cierre de Caja:");
-            if (pass === "1996") {
-                s.style.display = "block";
-                mostrarToast("🔓 Acceso concedido", "#1557b0");
-            } else if (pass !== null) {
-                mostrarToast("❌ Clave incorrecta", "#dc3545");
-            }
+        function guardarVentaPOS() {
+            let p = document.getElementById("productoAdmin").value;
+            let cant = parseFloat(document.getElementById("cantidadAdmin").value);
+            if (isNaN(cant) || cant <= 0 || cant > (inventario[p] || 0)) { mostrarToast("Verifica cantidad", "#dc3545"); return; }
+            
+            db.ref('inventario/' + p).set(Math.round((inventario[p] - cant)*100)/100);
+            db.ref('historial_ventas').push({ fruta: p, cantidad: cant, total: cant * PRECIO_UNIDAD, fecha: new Date().toLocaleString(), tipo: 'Presencial' });
+            mostrarToast("✅ Venta registrada", "#28a745");
         }
 
         function sumarStock() {
-            let p = document.getElementById("producto").value;
+            let p = document.getElementById("productoAdmin").value;
             let cant = parseFloat(document.getElementById("cantidadNueva").value);
-            
-            if(isNaN(cant) || cant <= 0) {
-                mostrarToast("⚠️ Ingresa una cantidad válida para sumar", "#ffc107");
-                return;
-            }
-            
+            if(isNaN(cant) || cant <= 0) return;
             db.ref('inventario/' + p).set(Math.round(((inventario[p] || 0) + cant)*100)/100);
-            document.getElementById("cantidadNueva").value = "";
-            mostrarToast(`📥 Se agregaron ${cant} und de ${p}`, "#28a745");
+            mostrarToast(`📥 Ingresado al inventario`, "#28a745");
         }
 
         function hacerCierreCaja() {
             db.ref('historial_ventas').once('value', (s) => {
-                let total = 0;
-                if(s.val()) {
-                    Object.values(s.val()).forEach(v => total += v.total);
-                }
+                let total = 0; if(s.val()) Object.values(s.val()).forEach(v => total += v.total);
                 document.getElementById("resultadoCierre").innerText = formatoCOP.format(total);
-                mostrarToast("💰 Cierre calculado con éxito", "#1557b0");
             });
         }
 
+        function completarPedido(key, fruta, cant, total) {
+            // Mover de pedidos pendientes al historial de ventas para que cuente en la caja
+            db.ref('historial_ventas').push({ fruta: fruta, cantidad: cant, total: total, fecha: new Date().toLocaleString(), tipo: 'Pedido Online' });
+            db.ref('pedidos_pendientes/' + key).remove();
+            mostrarToast("✅ Pedido completado y sumado a caja", "#1557b0");
+        }
+
         function borrarHistorial() {
-            if(confirm("⚠️ ¿Estás totalmente seguro de borrar todas las ventas de hoy? Esto pondrá la caja en $0.")) {
-                db.ref('historial_ventas').remove();
-                document.getElementById("resultadoCierre").innerText = "$ 0";
-                mostrarToast("🗑️ Historial del día reiniciado", "#dc3545");
-            }
+            if(confirm("¿Seguro de borrar todas las ventas de hoy?")) { db.ref('historial_ventas').remove(); }
         }
     </script>
 </body>
